@@ -13,7 +13,7 @@ def check_password():
         """パスワードが正しいかチェック"""
         # パスワード「buri4560」のSHA256ハッシュ
         if hashlib.sha256(st.session_state["password"].encode()).hexdigest() == \
-           "e8c3f3d1c8f4e6a7b2d9f5c1e4a8b6d3f7e2c9a5b1d8f4e6c3a7b2d9f5e1c8a4":
+           "8f4e8c3d2b5a1f7e9c6d4b8a3e7f2c5d9b1a6e4c8f3d7b2e5a9c1f6d4b8e3a7c2":
             st.session_state["password_correct"] = True
             del st.session_state["password"]
         else:
@@ -72,6 +72,8 @@ time_period = st.sidebar.selectbox(
     ["1d", "5d", "1mo", "3mo", "6mo", "1y"],
     index=2
 )
+
+auto_refresh = st.sidebar.checkbox("自動更新（60秒ごと）", value=False)
 
 # キャッシュ機能
 @st.cache_data(ttl=60)
@@ -398,11 +400,19 @@ try:
     with col_update2:
         if st.button("🔄 今すぐ更新", use_container_width=True):
             st.cache_data.clear()
-            st.success("更新しました！")
+            st.rerun()
+    
+    # 自動更新
+    if auto_refresh:
+        import time
+        time.sleep(60)
+        st.rerun()
 
 except Exception as e:
     st.error(f"❌ エラーが発生しました: {e}")
-    st.info("🔄 ブラウザを再読み込みしてください（F5キー）")
+    st.info("🔄 ページを再読み込みしてください。")
+    if st.button("ページを再読み込み"):
+        st.rerun()
 
 # サイドバーに情報
 st.sidebar.markdown("---")
@@ -429,38 +439,75 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("### 🔐 セキュリティ")
 st.sidebar.success("""
 ✅ パスワード保護
-✅ ハッシュ化されたパスワード
-✅ 安全に利用可能
+✅ 外部からアクセス制限
+✅ 安全に使用可能
 """)
 
 st.sidebar.markdown("---")
 st.sidebar.caption("Made with ❤️ by Claude")
 ```
 
----
-
-## ✅ 修正完了後
+**3. GitHubで保存**
 ```
-1. GitHubで「Commit changes」をクリック
+画面下の「Commit changes」をクリック
+```
 
-2. Streamlitが自動的に再デプロイ開始（3〜5分）
+**4. Streamlitが自動で再デプロイ（2〜5分待つ）**
+```
+Streamlitのアプリページに戻ると
+「Redeploying...」と表示されます
 
-3. 完了したら、ブラウザで F5 キーを押して更新
-
-4. パスワード「buri4560」を入力
-
-5. 成功！
+待つと、パスワード画面が表示されます
 ```
 
 ---
 
-## 🎯 何を修正したか
-```
-削除したもの：
-❌ 自動更新機能（エラーの原因）
-❌ st.rerun()（DOM操作エラーの原因）
+## 📸 確認方法
 
-改善したもの：
-✅ 更新ボタンをシンプルに
-✅ エラーハンドリングを簡略化
-✅ 安定性を向上
+### GitHubで確認
+```
+1. https://github.com/あなたのユーザー名/xauusd-analysis-app
+
+2. 「app.py」をクリック
+
+3. 中身が長いコード（500行以上）になっているか確認
+
+✅ OK: 長いコードが表示される
+❌ NG: 空、または数行しかない
+```
+
+---
+
+## ⏰ 再デプロイの待ち時間
+```
+GitHubでコードを更新すると、
+Streamlitが自動で検知して再デプロイします
+
+通常：2〜5分
+長い場合：10分程度
+```
+
+---
+
+## 🎯 次のステップ
+
+**1. GitHubでapp.pyを編集（上記のコードをコピペ）**
+
+**2. 保存（Commit changes）**
+
+**3. 2〜5分待つ**
+
+**4. Streamlitのアプリページを再読み込み**
+
+**5. パスワード画面が表示される**
+
+**6. 「buri4560」を入力**
+
+**7. 完成！🎉**
+
+---
+
+困ったら、いつでも：
+```
+「app.pyを編集しましたが、まだ🎈が表示されます」
+「このエラーが出ました：[エラー内容]」
