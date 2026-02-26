@@ -12,23 +12,20 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
     
-    /* 全体背景 - ダークグラデーション */
     .stApp {
         background: linear-gradient(135deg, #0a0e27 0%, #1a1d3a 25%, #0f1829 50%, #1e2139 75%, #0a0e27 100%);
         background-attachment: fixed;
     }
     
-    /* メインコンテナ */
     .main .block-container {
         padding-top: 2rem;
         padding-bottom: 2rem;
         max-width: 1400px;
     }
     
-    /* タイトル - ネオングラデーション */
     h1 {
         font-family: 'Orbitron', monospace !important;
-        background: linear-gradient(90deg, #00d9ff 0%, #7b2ff7 50%, #f107d4 100%);
+        background: linear-gradient(90deg, #00aaff 0%, #0055ff 50%, #aa00ff 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -36,28 +33,26 @@ st.markdown("""
         font-size: 2.8rem !important;
         text-align: center;
         margin-bottom: 0.5rem !important;
-        text-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+        text-shadow: 0 0 30px rgba(0, 170, 255, 0.5);
         animation: glow 2s ease-in-out infinite alternate;
     }
     
     @keyframes glow {
-        from { filter: drop-shadow(0 0 5px #00d9ff); }
-        to { filter: drop-shadow(0 0 20px #7b2ff7); }
+        from { filter: drop-shadow(0 0 5px #00aaff); }
+        to { filter: drop-shadow(0 0 20px #0055ff); }
     }
     
-    /* サブタイトル */
     .stApp p, .stMarkdown p {
         font-family: 'Rajdhani', sans-serif !important;
         color: #8b9dc3 !important;
         text-align: center;
     }
     
-    /* メトリックカード - ネオングラデーション */
     [data-testid="stMetricValue"] {
         font-family: 'Orbitron', monospace !important;
         font-size: 2rem !important;
         font-weight: 700 !important;
-        background: linear-gradient(135deg, #00d9ff 0%, #00b8ff 100%);
+        background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -75,86 +70,82 @@ st.markdown("""
         font-size: 1rem !important;
     }
     
-    /* メトリックコンテナ - ネオングラスモーフィズム */
     div[data-testid="stMetric"] {
-        background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(123, 47, 247, 0.1) 100%);
+        background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%);
         backdrop-filter: blur(10px);
         border-radius: 20px;
         padding: 1.5rem !important;
-        border: 1px solid rgba(0, 217, 255, 0.3);
-        box-shadow: 0 8px 32px rgba(0, 217, 255, 0.2), inset 0 0 20px rgba(0, 217, 255, 0.1);
+        border: 1px solid rgba(0, 170, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 170, 255, 0.2), inset 0 0 20px rgba(0, 170, 255, 0.1);
         transition: all 0.3s ease;
     }
     
     div[data-testid="stMetric"]:hover {
-        border-color: rgba(0, 217, 255, 0.8);
-        box-shadow: 0 8px 32px rgba(0, 217, 255, 0.4), inset 0 0 30px rgba(0, 217, 255, 0.2);
+        border-color: rgba(0, 170, 255, 0.8);
+        box-shadow: 0 8px 32px rgba(0, 170, 255, 0.4), inset 0 0 30px rgba(0, 170, 255, 0.2);
         transform: translateY(-5px);
     }
     
-    /* タブ - ネオンスタイル */
     .stTabs [data-baseweb="tab-list"] {
         gap: 10px;
         background: rgba(10, 14, 39, 0.6);
         border-radius: 15px;
         padding: 10px;
-        border: 1px solid rgba(0, 217, 255, 0.2);
+        border: 1px solid rgba(0, 170, 255, 0.2);
     }
     
     .stTabs [data-baseweb="tab"] {
         font-family: 'Rajdhani', sans-serif !important;
         font-weight: 600;
         font-size: 1.1rem;
-        background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(123, 47, 247, 0.1) 100%);
+        background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%);
         border-radius: 12px;
-        color: #00d9ff !important;
-        border: 1px solid rgba(0, 217, 255, 0.3);
+        color: #00aaff !important;
+        border: 1px solid rgba(0, 170, 255, 0.3);
         padding: 12px 24px;
         transition: all 0.3s ease;
     }
     
     .stTabs [data-baseweb="tab"]:hover {
-        background: linear-gradient(135deg, rgba(0, 217, 255, 0.2) 0%, rgba(123, 47, 247, 0.2) 100%);
-        border-color: #00d9ff;
-        box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+        background: linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(0, 85, 255, 0.2) 100%);
+        border-color: #00aaff;
+        box-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
         transform: translateY(-2px);
     }
     
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #00d9ff 0%, #7b2ff7 100%) !important;
+        background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%) !important;
         color: #ffffff !important;
-        border-color: #00d9ff !important;
-        box-shadow: 0 0 30px rgba(0, 217, 255, 0.6);
+        border-color: #00aaff !important;
+        box-shadow: 0 0 30px rgba(0, 170, 255, 0.6);
     }
     
-    /* ボタン - ネオン発光 */
     .stButton > button {
         font-family: 'Rajdhani', sans-serif !important;
         font-weight: 700;
         font-size: 1.1rem;
-        background: linear-gradient(135deg, rgba(0, 217, 255, 0.2) 0%, rgba(123, 47, 247, 0.2) 100%);
-        color: #00d9ff !important;
-        border: 2px solid #00d9ff;
+        background: linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(0, 85, 255, 0.2) 100%);
+        color: #00aaff !important;
+        border: 2px solid #00aaff;
         border-radius: 12px;
         padding: 0.6rem 2rem;
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
-        box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
     }
     
     .stButton > button:hover {
-        background: linear-gradient(135deg, #00d9ff 0%, #7b2ff7 100%);
+        background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%);
         color: #ffffff !important;
         border-color: #ffffff;
-        box-shadow: 0 0 40px rgba(0, 217, 255, 0.8), 0 0 60px rgba(123, 47, 247, 0.5);
+        box-shadow: 0 0 40px rgba(0, 170, 255, 0.8), 0 0 60px rgba(0, 85, 255, 0.5);
         transform: translateY(-3px) scale(1.05);
     }
     
-    /* サイドバー - ダークネオン */
     [data-testid="stSidebar"] {
         background: linear-gradient(180deg, #0a0e27 0%, #1a1d3a 100%);
-        border-right: 2px solid rgba(0, 217, 255, 0.3);
-        box-shadow: 5px 0 30px rgba(0, 217, 255, 0.2);
+        border-right: 2px solid rgba(0, 170, 255, 0.3);
+        box-shadow: 5px 0 30px rgba(0, 170, 255, 0.2);
     }
     
     [data-testid="stSidebar"] .stSelectbox label,
@@ -162,41 +153,38 @@ st.markdown("""
     [data-testid="stSidebar"] h2,
     [data-testid="stSidebar"] h3 {
         font-family: 'Rajdhani', sans-serif !important;
-        color: #00d9ff !important;
+        color: #00aaff !important;
         font-weight: 700 !important;
-        text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
     }
     
-    /* 入力フィールド - ネオングロー */
     .stTextInput > div > div > input {
         font-family: 'Rajdhani', sans-serif !important;
         background: rgba(10, 14, 39, 0.8) !important;
-        border: 1px solid rgba(0, 217, 255, 0.4) !important;
+        border: 1px solid rgba(0, 170, 255, 0.4) !important;
         border-radius: 10px;
-        color: #00d9ff !important;
+        color: #00aaff !important;
         padding: 12px;
         transition: all 0.3s ease;
     }
     
     .stTextInput > div > div > input:focus {
-        border-color: #00d9ff !important;
-        box-shadow: 0 0 20px rgba(0, 217, 255, 0.5) !important;
+        border-color: #00aaff !important;
+        box-shadow: 0 0 20px rgba(0, 170, 255, 0.5) !important;
     }
     
-    /* セレクトボックス - ネオンスタイル */
     .stSelectbox > div > div {
         background: rgba(10, 14, 39, 0.8) !important;
-        border: 1px solid rgba(0, 217, 255, 0.4) !important;
+        border: 1px solid rgba(0, 170, 255, 0.4) !important;
         border-radius: 10px;
-        color: #00d9ff !important;
+        color: #00aaff !important;
     }
     
-    /* ラジオボタン - ネオン */
     .stRadio > div {
         background: rgba(10, 14, 39, 0.4);
         border-radius: 12px;
         padding: 15px;
-        border: 1px solid rgba(0, 217, 255, 0.2);
+        border: 1px solid rgba(0, 170, 255, 0.2);
     }
     
     .stRadio label {
@@ -205,46 +193,42 @@ st.markdown("""
         font-weight: 600;
     }
     
-    /* 区切り線 - ネオングラデーション */
     hr {
         border: none;
         height: 2px;
-        background: linear-gradient(90deg, transparent 0%, #00d9ff 50%, transparent 100%);
+        background: linear-gradient(90deg, transparent 0%, #00aaff 50%, transparent 100%);
         margin: 2rem 0;
-        box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        box-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
     }
     
-    /* エキスパンダー - ネオングラスモーフィズム */
     .streamlit-expanderHeader {
         font-family: 'Rajdhani', sans-serif !important;
         font-weight: 700;
         font-size: 1.2rem;
-        background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(123, 47, 247, 0.1) 100%);
-        border: 1px solid rgba(0, 217, 255, 0.3);
+        background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%);
+        border: 1px solid rgba(0, 170, 255, 0.3);
         border-radius: 12px;
-        color: #00d9ff !important;
+        color: #00aaff !important;
         backdrop-filter: blur(10px);
     }
     
     .streamlit-expanderHeader:hover {
-        border-color: #00d9ff;
-        box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+        border-color: #00aaff;
+        box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
     }
     
-    /* インフォボックス - カスタムカラー */
     .stAlert {
-        background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(123, 47, 247, 0.1) 100%);
-        border-left: 4px solid #00d9ff;
+        background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%);
+        border-left: 4px solid #00aaff;
         border-radius: 12px;
         backdrop-filter: blur(10px);
         color: #8b9dc3 !important;
         font-family: 'Rajdhani', sans-serif !important;
     }
     
-    /* マークダウン見出し - ネオングラデーション */
     .stMarkdown h2 {
         font-family: 'Orbitron', monospace !important;
-        background: linear-gradient(90deg, #00d9ff 0%, #7b2ff7 100%);
+        background: linear-gradient(90deg, #00aaff 0%, #0055ff 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -254,9 +238,9 @@ st.markdown("""
     
     .stMarkdown h3 {
         font-family: 'Rajdhani', sans-serif !important;
-        color: #00d9ff !important;
+        color: #00aaff !important;
         font-weight: 700;
-        text-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        text-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
     }
     
     .stMarkdown h4 {
@@ -265,37 +249,32 @@ st.markdown("""
         font-weight: 600;
     }
     
-    /* リスト - ネオンポイント */
     .stMarkdown ul {
         font-family: 'Rajdhani', sans-serif !important;
         color: #8b9dc3 !important;
     }
     
     .stMarkdown li::marker {
-        color: #00d9ff !important;
+        color: #00aaff !important;
     }
     
-    /* キャプション - ネオングロー */
     .stCaption {
         font-family: 'Rajdhani', sans-serif !important;
-        color: #00d9ff !important;
-        text-shadow: 0 0 5px rgba(0, 217, 255, 0.3);
+        color: #00aaff !important;
+        text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
     }
     
-    /* スピナー - ネオンアニメーション */
     .stSpinner > div {
-        border-top-color: #00d9ff !important;
-        border-right-color: #7b2ff7 !important;
+        border-top-color: #00aaff !important;
+        border-right-color: #0055ff !important;
     }
     
-    /* 強調テキスト */
     strong {
-        color: #00d9ff !important;
+        color: #00aaff !important;
         font-weight: 700;
-        text-shadow: 0 0 5px rgba(0, 217, 255, 0.3);
+        text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
     }
     
-    /* スクロールバー - ネオンスタイル */
     ::-webkit-scrollbar {
         width: 10px;
         height: 10px;
@@ -306,13 +285,13 @@ st.markdown("""
     }
     
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #00d9ff 0%, #7b2ff7 100%);
+        background: linear-gradient(180deg, #00aaff 0%, #0055ff 100%);
         border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        box-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        box-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+        box-shadow: 0 0 20px rgba(0, 170, 255, 0.8);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -554,10 +533,10 @@ try:
     st.markdown("---")
     
     fig = go.Figure()
-    fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='XAUUSD', increasing_line_color='#00d9ff', decreasing_line_color='#f107d4'))
-    fig.add_trace(go.Scatter(x=df.index, y=df['SMA_20'], name='SMA20', line=dict(color='#00d9ff', width=2)))
+    fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='XAUUSD', increasing_line_color='#00aaff', decreasing_line_color='#aa00ff'))
+    fig.add_trace(go.Scatter(x=df.index, y=df['SMA_20'], name='SMA20', line=dict(color='#00aaff', width=2)))
     if len(df) >= 50:
-        fig.add_trace(go.Scatter(x=df.index, y=df['SMA_50'], name='SMA50', line=dict(color='#7b2ff7', width=2)))
+        fig.add_trace(go.Scatter(x=df.index, y=df['SMA_50'], name='SMA50', line=dict(color='#0055ff', width=2)))
     fig.add_hline(y=support, line_dash="dash", line_color="#00ff88", annotation_text="サポート", line_width=2)
     fig.add_hline(y=resistance, line_dash="dash", line_color="#ff0088", annotation_text="レジスタンス", line_width=2)
     fig.add_hline(y=5000, line_dash="dot", line_color="#ffff00", annotation_text="5,000", line_width=2)
@@ -599,7 +578,7 @@ try:
     st.markdown("---")
     jst = pytz.timezone('Asia/Tokyo')
     now_jst = datetime.now(jst)
-    st.caption(f"⏰ 最終更新: {now_jst.strftime('%Y年%m月%d日 %H:%M:%S')}")
+    st.caption(f"⏰ 最終更新: {now_jst.strftime('%Y年%m月%d日 %H:%M:%S')} JST")
     if st.button("🔄 更新"):
         st.cache_data.clear()
         st.rerun()
