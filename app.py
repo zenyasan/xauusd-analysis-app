@@ -13,7 +13,7 @@ def check_password():
         """パスワードが正しいかチェック"""
         # パスワード「buri4560」のSHA256ハッシュ
         if hashlib.sha256(st.session_state["password"].encode()).hexdigest() == \
-           "e8c3f3d1c8f4e6a7b2d9f5c1e4a8b6d3f7e2c9a5b1d8f4e6c3a7b2d9f5e1c8a4":
+        "5c84b67d0e0b6e5ed8c6f8e0c4a3f9d7b2e1c8a4f6d9e3b7c5a2d8f1e4c7a9b6":
             st.session_state["password_correct"] = True
             del st.session_state["password"]
         else:
