@@ -1,4 +1,9 @@
-import streamlit as st
+完璧です！正しいパスワードハッシュが分かりました。
+
+📄 完全版 app.py（パスワード修正済み）
+以下のコード全体をコピーして、GitHubのapp.pyに貼り付けてください。
+重要：コードブロック内だけをコピーしてください
+pythonimport streamlit as st
 import yfinance as yf
 import pandas as pd
 import plotly.graph_objects as go
@@ -13,7 +18,7 @@ def check_password():
         """パスワードが正しいかチェック"""
         # パスワード「buri4560」のSHA256ハッシュ
         if hashlib.sha256(st.session_state["password"].encode()).hexdigest() == \
-        "5c84b67d0e0b6e5ed8c6f8e0c4a3f9d7b2e1c8a4f6d9e3b7c5a2d8f1e4c7a9b6":
+           "4e42de48f9cdf95d8cbf5ad17f11a63601120eb1cdaa35eae088bb75196e4a67":
             st.session_state["password_correct"] = True
             del st.session_state["password"]
         else:
