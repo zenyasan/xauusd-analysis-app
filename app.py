@@ -597,7 +597,7 @@ try:
         display_trade_rules()
     
     st.markdown("---")
-    jst = pytz.timezone('Asia/Tokyo')
+jst = pytz.timezone('Asia/Tokyo')
 now_jst = datetime.now(jst)
 st.caption(f"⏰ 最終更新: {now_jst.strftime('%Y年%m月%d日 %H:%M:%S')}")
     if st.button("🔄 更新"):
