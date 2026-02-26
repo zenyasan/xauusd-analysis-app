@@ -1,8 +1,3 @@
-完璧です！正しいパスワードハッシュが分かりました。
-
-📄 完全版 app.py（パスワード修正済み）
-以下のコード全体をコピーして、GitHubのapp.pyに貼り付けてください。
-重要：コードブロック内だけをコピーしてください
 pythonimport streamlit as st
 import yfinance as yf
 import pandas as pd
