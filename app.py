@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime
 import hashlib
+import pytz
 
 st.set_page_config(page_title="XAUUSD分析", page_icon="💰", layout="wide", initial_sidebar_state="expanded")
 
@@ -596,7 +597,9 @@ try:
         display_trade_rules()
     
     st.markdown("---")
-    st.caption(f"⏰ 最終更新: {datetime.now().strftime('%H:%M:%S')}")
+    jst = pytz.timezone('Asia/Tokyo')
+now_jst = datetime.now(jst)
+st.caption(f"⏰ 最終更新: {now_jst.strftime('%Y年%m月%d日 %H:%M:%S')}")
     if st.button("🔄 更新"):
         st.cache_data.clear()
         st.rerun()
