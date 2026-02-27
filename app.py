@@ -50,7 +50,7 @@ st.markdown("""
         -webkit-text-fill-color: transparent;
         background-clip: text;
         font-weight: 900;
-        font-size: 1.7rem;
+        font-size: 1.5rem;
         text-align: center;
         margin: 0;
         padding: 0;
@@ -62,7 +62,7 @@ st.markdown("""
         font-family: 'Rajdhani', sans-serif;
         color: #8b9dc3;
         text-align: center;
-        font-size: 0.8rem;
+        font-size: 0.6rem;
         margin: 0.2rem 0 0.6rem 0;
     }
     
@@ -71,10 +71,10 @@ st.markdown("""
             top: 3rem;
         }
         .sticky-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         .sticky-subtitle {
-            font-size: 0.7rem;
+            font-size: 0.5rem;
         }
         .main .block-container {
             padding-top: 19rem;
@@ -591,24 +591,24 @@ st.markdown(f'''
 <div class="sticky-header">
     <div class="sticky-title">XAUUSD<br>リアルタイム分析アシスタント</div>
     <div class="sticky-subtitle">マルチタイムフレーム対応版 - 高精度戦略</div>
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem; margin-top: 0.4rem;">
-        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.3rem; text-align: center;">
-            <div style="font-size: 0.65rem; color: #8b9dc3; margin-bottom: 0.1rem;">🔽 サポート</div>
-            <div style="font-size: 0.9rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${st.session_state.support_value:,.0f}</div>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.3rem; margin-top: 0.3rem;">
+        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.2rem; text-align: center;">
+            <div style="font-size: 0.45rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">🔽 サポート</div>
+            <div style="font-size: 0.7rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">${st.session_state.support_value:,.0f}</div>
         </div>
-        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.3rem; text-align: center;">
-            <div style="font-size: 0.65rem; color: #8b9dc3; margin-bottom: 0.1rem;">💰 現在価格</div>
-            <div style="font-size: 0.9rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${st.session_state.current_price:,.2f}</div>
-            <div style="font-size: 0.6rem; color: #8b9dc3;">{st.session_state.price_change:+.2f} ({st.session_state.price_pct:+.2f}%)</div>
+        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.2rem; text-align: center;">
+            <div style="font-size: 0.45rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">💰 現在価格</div>
+            <div style="font-size: 0.7rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">${st.session_state.current_price:,.2f}</div>
+            <div style="font-size: 0.4rem; color: #8b9dc3; line-height: 1;">{st.session_state.price_change:+.2f} ({st.session_state.price_pct:+.2f}%)</div>
         </div>
-        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.3rem; text-align: center;">
-            <div style="font-size: 0.65rem; color: #8b9dc3; margin-bottom: 0.1rem;">🔼 レジスタンス</div>
-            <div style="font-size: 0.9rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${st.session_state.resistance_value:,.0f}</div>
+        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.2rem; text-align: center;">
+            <div style="font-size: 0.45rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">🔼 レジスタンス</div>
+            <div style="font-size: 0.7rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">${st.session_state.resistance_value:,.0f}</div>
         </div>
-        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.3rem; text-align: center;">
-            <div style="font-size: 0.65rem; color: #8b9dc3; margin-bottom: 0.1rem;">📈 RSI (7)</div>
-            <div style="font-size: 0.9rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{st.session_state.rsi_value:.1f}</div>
-            <div style="font-size: 0.6rem; color: #8b9dc3;">{st.session_state.rsi_status}</div>
+        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.2rem; text-align: center;">
+            <div style="font-size: 0.45rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">📈 RSI (7)</div>
+            <div style="font-size: 0.7rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">{st.session_state.rsi_value:.1f}</div>
+            <div style="font-size: 0.4rem; color: #8b9dc3; line-height: 1;">{st.session_state.rsi_status}</div>
         </div>
     </div>
 </div>
@@ -685,8 +685,12 @@ def get_gold_data(period, interval):
     try:
         ticker = yf.Ticker("GC=F")
         data = ticker.history(period=period, interval=interval)
-        if len(data) > 0 and data.index.tz is not None:
+        
+        if len(data) > 0:
+            if data.index.tz is None:
+                data.index = data.index.tz_localize('UTC')
             data.index = data.index.tz_convert('Asia/Tokyo')
+        
         return data
     except Exception as e:
         st.error(f"データ取得エラー: {e}")
@@ -764,6 +768,8 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - **ATR**: {atr:.2f}（ボラティリティ指標）
 - **ピボット**: ${pivot:,.2f}
 
+""", f"""
+
 ### 🎯 高精度エントリー戦略
 
 #### 🟢 ロングの場合
@@ -797,6 +803,31 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - 経済指標30分前は避ける
 - 連続3回負けたら1時間休憩必須
 - ATRが平均の1.5倍以上の時は見送り
+""", """
+### ℹ️ 用語解説
+
+**現在価格の変動率**
+- **プラス（+）**: 前の時間帯より上昇 → 上昇トレンドの可能性が高い
+- **マイナス（-）**: 前の時間帯より下落 → 下落トレンドの可能性が高い
+
+**RSI (7) - 相対力指数**
+- **70以上**: 買われすぎ → 売りを検討（価格が下がる可能性）
+- **30以下**: 売られすぎ → 買いを検討（価格が上がる可能性）
+- **40-60**: 中立 → トレンドに従って判断
+
+**MACD - 移動平均収束拡散**
+- **🟢 買いシグナル**: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり
+- **🔴 売りシグナル**: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり
+
+**ATR - 平均真の範囲**
+- ボラティリティ（価格変動の大きさ）を測る指標
+- **数値が大きい**: 値動きが激しい → 損切り幅を広くする
+- **数値が小さい**: 値動きが穏やか → 通常の戦略で
+
+**ピボットポイント**
+- 前日の高値・安値・終値から計算される基準価格
+- **S1（サポート1）**: 第1サポートライン（下値支持）
+- **R1（レジスタンス1）**: 第1レジスタンスライン（上値抵抗）
 """
     
     elif style == "デイトレード":
@@ -814,6 +845,8 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 
 ### トレンド判定
 {"📈 **強い上昇トレンド** - ロング優勢" if change_pct > 0.5 and macd > macd_signal else "📉 **強い下落トレンド** - ショート優勢" if change_pct < -0.5 and macd < macd_signal else "➡️ **レンジ相場** - ブレイクアウト待ち"}
+
+""", f"""
 
 ### 🎯 精密トレード戦略
 
@@ -856,6 +889,28 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - {"RSI買われすぎ、利確検討" if rsi > 70 else "RSI売られすぎ、押し目買い検討" if rsi < 30 else "RSI中立、トレンドに従う"}
 - ATRが{atr:.2f}なので、{"ボラティリティ高め、損切り幅を拡大" if atr > 15 else "ボラティリティ通常、標準的戦略で"}
 - ポジションは必ず当日中に決済
+""", """
+### ℹ️ 用語解説
+
+**トレンド判定について**
+- **強い上昇トレンド**: 価格が継続的に上がっている → ロング（買い）が有利
+- **強い下落トレンド**: 価格が継続的に下がっている → ショート（売り）が有利
+- **レンジ相場**: 価格が一定範囲内で上下 → ブレイクアウト（範囲を抜ける瞬間）を待つ
+
+**段階的利確とは**
+- ポジションを一度に決済せず、3回に分けて利益確定すること
+- 例：30%を第1目標で決済、40%を第2目標で決済、残り30%を第3目標で決済
+- **メリット**: 利益を確保しつつ、さらなる上昇も狙える
+
+**リスクリワード比率**
+- 損失額に対する利益額の比率
+- **1:2以上が理想**: 10ドルリスクを取って20ドル以上の利益を狙う
+- これにより勝率が50%でも利益が出る
+
+**時間帯別の特徴**
+- **東京時間**: 比較的穏やか、トレンドフォロー（流れに乗る）が基本
+- **欧州時間**: 動きが活発になる、ブレイクアウト（急激な価格変動）が起きやすい
+- **NY時間**: 最も取引量が多い、大きなトレンドが発生しやすい
 """
     
     else:
@@ -870,6 +925,8 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 
 ### 大局的トレンド分析
 {"🟢 **強気相場継続中** - 押し目買い戦略" if change_pct > 1.0 and macd > macd_signal else "🔴 **弱気相場継続中** - 戻り売り戦略" if change_pct < -1.0 and macd < macd_signal else "🟡 **調整局面** - レンジブレイク待ち"}
+
+""", f"""
 
 ### 🎯 中期ポジション戦略
 
@@ -926,6 +983,31 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - ポジションサイズ: 資金の2〜5%
 - 週末リスク: 金曜夕方までに50%利確検討
 - ニュースチェック: 毎日2回（朝・夕）必須
+""", """
+### ℹ️ 用語解説
+
+**マクロ環境とは**
+- 市場全体に影響を与える大きな要因のこと
+- 金融政策、地政学リスク、経済指標など
+
+**押し目買い vs 戻り売り**
+- **押し目買い**: 上昇トレンド中の一時的な下落で買う戦略
+- **戻り売り**: 下落トレンド中の一時的な上昇で売る戦略
+
+**分割エントリーのメリット**
+- 一度に全額投資せず、3回に分けてポジションを取る
+- **メリット**: 平均取得価格を有利にできる、リスクを分散できる
+- **例**: 1回目で40%、価格が下がったら2回目で30%、さらに下がったら3回目で30%
+
+**トレーリングストップとは**
+- 価格の動きに合わせて損切りラインを移動させる手法
+- **例**: 価格が上昇したら、損切りラインも上げていく
+- **メリット**: 利益を確保しながら、さらなる上昇も狙える
+
+**ファンダメンタル要因**
+- **地政学リスク**: 戦争や紛争 → 安全資産の金が買われる
+- **FRB政策**: 金利上昇 → ドル高 → 金価格下落
+- **インフレ**: 物価上昇 → 金が買われる（インフレヘッジ）
 """
 
 def display_trade_rules():
@@ -973,6 +1055,11 @@ try:
     st.session_state.support_value = support
     st.session_state.resistance_value = resistance
     
+    jst = pytz.timezone('Asia/Tokyo')
+    now_jst = datetime.now(jst)
+    latest_data_time = df.index[-1]
+    time_diff_minutes = (now_jst - latest_data_time).total_seconds() / 60
+    
     fig = go.Figure()
     fig.add_trace(go.Candlestick(
         x=df.index,
@@ -1003,7 +1090,14 @@ try:
         plot_bgcolor='rgba(10,14,39,0.5)',
         font=dict(family='Rajdhani', color='#8b9dc3')
     )
+    
+    fig.update_xaxes(
+        tickformat='%m/%d<br>%H:%M'
+    )
+    
     st.plotly_chart(fig, use_container_width=True)
+    
+    st.caption(f"⏰ チャート最終データ: {latest_data_time.strftime('%Y年%m月%d日 %H:%M')} JST（約{time_diff_minutes:.0f}分前）")
     
     st.markdown("---")
     
@@ -1017,7 +1111,14 @@ try:
     selected_analysis = st.selectbox("📊 分析タイプ", list(analysis_options.keys()), index=0)
     display_style = analysis_options[selected_analysis]
     
-    st.markdown(generate_advanced_analysis(display_style, current, pct, rsi, macd, macd_signal, atr, support, resistance, pivot, r1, s1, selected_timeframe))
+    analysis_text, strategy_text, explanation_text = generate_advanced_analysis(display_style, current, pct, rsi, macd, macd_signal, atr, support, resistance, pivot, r1, s1, selected_timeframe)
+    
+    st.markdown(analysis_text)
+    
+    with st.expander("ℹ️ 用語解説を見る"):
+        st.markdown(explanation_text)
+    
+    st.markdown(strategy_text)
     
     st.markdown("---")
     display_trade_rules()
@@ -1231,8 +1332,6 @@ try:
             st.info("統計分析にはトレードデータが必要です")
     
     st.markdown("---")
-    jst = pytz.timezone('Asia/Tokyo')
-    now_jst = datetime.now(jst)
     st.caption(f"⏰ 最終更新: {now_jst.strftime('%Y年%m月%d日 %H:%M:%S')} JST")
     
     if st.button("🔄 今すぐ更新", use_container_width=True):
@@ -1241,6 +1340,8 @@ try:
 
 except Exception as e:
     st.error(f"❌ エラー: {e}")
+    import traceback
+    st.code(traceback.format_exc())
 
 st.sidebar.markdown("---")
 st.sidebar.info(f"""
