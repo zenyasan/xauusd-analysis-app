@@ -23,39 +23,53 @@ st.markdown("""
     }
     
     .main .block-container {
-        padding-top: 2rem;
+        padding-top: 8rem;
         padding-bottom: 2rem;
         max-width: 1400px;
     }
     
     .sticky-header {
-        position: sticky;
+        position: fixed;
         top: 0;
-        z-index: 999;
+        left: 0;
+        right: 0;
+        z-index: 9999;
         background: linear-gradient(135deg, #0a0e27 0%, #1a1d3a 100%);
-        padding: 1rem 0;
-        margin: -2rem 0 1rem 0;
+        padding: 1rem 2rem;
         border-bottom: 2px solid rgba(0, 170, 255, 0.3);
-        box-shadow: 0 4px 20px rgba(0, 170, 255, 0.2);
+        box-shadow: 0 4px 30px rgba(0, 170, 255, 0.3);
+        backdrop-filter: blur(10px);
     }
     
-    h1 {
-        font-family: 'Orbitron', monospace !important;
+    .sticky-title {
+        font-family: 'Orbitron', monospace;
         background: linear-gradient(90deg, #00aaff 0%, #0055ff 50%, #aa00ff 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        font-weight: 900 !important;
-        font-size: 2rem !important;
+        font-weight: 900;
+        font-size: 1.8rem;
         text-align: center;
-        margin-bottom: 0.3rem !important;
-        line-height: 1.2 !important;
+        margin: 0;
+        padding: 0;
+        line-height: 1.3;
         animation: glow 2s ease-in-out infinite alternate;
     }
     
+    .sticky-subtitle {
+        font-family: 'Rajdhani', sans-serif;
+        color: #8b9dc3;
+        text-align: center;
+        font-size: 0.9rem;
+        margin: 0.3rem 0 0.8rem 0;
+    }
+    
     @media (max-width: 768px) {
-        h1 {
-            font-size: 1.5rem !important;
+        .sticky-title {
+            font-size: 1.3rem;
+        }
+        .sticky-subtitle {
+            font-size: 0.8rem;
         }
     }
     
@@ -67,12 +81,11 @@ st.markdown("""
     .stApp p, .stMarkdown p {
         font-family: 'Rajdhani', sans-serif !important;
         color: #8b9dc3 !important;
-        text-align: center;
     }
     
     [data-testid="stMetricValue"] {
         font-family: 'Orbitron', monospace !important;
-        font-size: 1.5rem !important;
+        font-size: 1.3rem !important;
         font-weight: 700 !important;
         background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%);
         -webkit-background-clip: text;
@@ -82,21 +95,21 @@ st.markdown("""
     
     [data-testid="stMetricLabel"] {
         font-family: 'Rajdhani', sans-serif !important;
-        font-size: 0.9rem !important;
+        font-size: 0.85rem !important;
         color: #8b9dc3 !important;
         font-weight: 600 !important;
     }
     
     [data-testid="stMetricDelta"] {
         font-family: 'Rajdhani', sans-serif !important;
-        font-size: 0.85rem !important;
+        font-size: 0.8rem !important;
     }
     
     div[data-testid="stMetric"] {
         background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%);
         backdrop-filter: blur(10px);
         border-radius: 15px;
-        padding: 1rem !important;
+        padding: 0.8rem !important;
         border: 1px solid rgba(0, 170, 255, 0.3);
         box-shadow: 0 8px 32px rgba(0, 170, 255, 0.2), inset 0 0 20px rgba(0, 170, 255, 0.1);
         transition: all 0.3s ease;
@@ -105,7 +118,7 @@ st.markdown("""
     div[data-testid="stMetric"]:hover {
         border-color: rgba(0, 170, 255, 0.8);
         box-shadow: 0 8px 32px rgba(0, 170, 255, 0.4), inset 0 0 30px rgba(0, 170, 255, 0.2);
-        transform: translateY(-5px);
+        transform: translateY(-3px);
     }
     
     .stSelectbox > div > div {
@@ -435,7 +448,7 @@ def generate_harsh_feedback(stats):
     if not stats:
         return "データ不足。最低10トレードは記録してください。"
     
-    feedback = "## 🔴 弱点の厳しい指摘\n\n"
+    feedback = "## 🔴 あなたの弱点\n\n"
     
     if stats['win_rate'] < 40:
         feedback += "- **勝率が40%未満。完全に失敗しています。** エントリータイミングが全く機能していない。根本的に見直しが必要です。\n"
@@ -474,7 +487,7 @@ def generate_advice(stats):
     if not stats:
         return ""
     
-    advice = "## 💡 的確なアドバイス\n\n"
+    advice = "## 💡 改善のためのアドバイス\n\n"
     
     if stats['win_rate'] > 50 and stats['avg_profit'] < stats['avg_loss'] * 1.5:
         advice += "- 勝率は悪くないですが、利益が小さい。**利確を伸ばす練習をしてください。** トレンドに乗り続けることを意識しましょう。\n"
@@ -514,24 +527,41 @@ if "trade_history" not in st.session_state:
 if "selected_trades" not in st.session_state:
     st.session_state.selected_trades = []
 
-st.markdown('<div class="sticky-header">', unsafe_allow_html=True)
-st.title("💰 XAUUSD リアルタイム分析アシスタント")
-st.markdown("*マルチタイムフレーム対応版 - 高精度戦略*")
+if "current_price" not in st.session_state:
+    st.session_state.current_price = 0
+    st.session_state.price_change = 0
+    st.session_state.price_pct = 0
+    st.session_state.rsi_value = 0
+    st.session_state.rsi_status = "-"
+    st.session_state.support_value = 0
+    st.session_state.resistance_value = 0
 
-header_col1, header_col2 = st.columns(2)
-with header_col1:
-    if 'current_price' in st.session_state:
-        st.metric("💰 現在価格", f"${st.session_state.current_price:,.2f}", f"{st.session_state.price_change:+.2f} ({st.session_state.price_pct:+.2f}%)")
-    if 'rsi_value' in st.session_state:
-        st.metric("📈 RSI", f"{st.session_state.rsi_value:.1f}", st.session_state.rsi_status)
-with header_col2:
-    if 'support_value' in st.session_state:
-        st.metric("🔽 サポート", f"${st.session_state.support_value:,.0f}")
-    if 'resistance_value' in st.session_state:
-        st.metric("🔼 レジスタンス", f"${st.session_state.resistance_value:,.0f}")
-
-st.markdown('</div>', unsafe_allow_html=True)
-st.markdown("---")
+st.markdown(f'''
+<div class="sticky-header">
+    <div class="sticky-title">XAUUSD<br>リアルタイム分析アシスタント</div>
+    <div class="sticky-subtitle">マルチタイムフレーム対応版 - 高精度戦略</div>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 0.5rem;">
+        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 10px; padding: 0.5rem; text-align: center;">
+            <div style="font-size: 0.7rem; color: #8b9dc3;">💰 現在価格</div>
+            <div style="font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${st.session_state.current_price:,.2f}</div>
+            <div style="font-size: 0.7rem; color: #8b9dc3;">{st.session_state.price_change:+.2f} ({st.session_state.price_pct:+.2f}%)</div>
+        </div>
+        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 10px; padding: 0.5rem; text-align: center;">
+            <div style="font-size: 0.7rem; color: #8b9dc3;">📈 RSI (14)</div>
+            <div style="font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{st.session_state.rsi_value:.1f}</div>
+            <div style="font-size: 0.7rem; color: #8b9dc3;">{st.session_state.rsi_status}</div>
+        </div>
+        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 10px; padding: 0.5rem; text-align: center;">
+            <div style="font-size: 0.7rem; color: #8b9dc3;">🔽 サポート</div>
+            <div style="font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${st.session_state.support_value:,.0f}</div>
+        </div>
+        <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 10px; padding: 0.5rem; text-align: center;">
+            <div style="font-size: 0.7rem; color: #8b9dc3;">🔼 レジスタンス</div>
+            <div style="font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${st.session_state.resistance_value:,.0f}</div>
+        </div>
+    </div>
+</div>
+''', unsafe_allow_html=True)
 
 st.sidebar.header("⚙️ 設定")
 
@@ -648,24 +678,203 @@ def find_support_resistance(data):
     support = recent['Low'].rolling(20).min().iloc[-1]
     return support, resistance
 
-def generate_analysis(style, current, change_pct, rsi, atr, support, resistance, pivot, timeframe):
+def calculate_targets_with_atr(current, atr, support, resistance):
     long_entry = support + (resistance - support) * 0.2
     long_sl = current - (atr * 1.5)
-    long_tp = current + (atr * 2.5)
+    long_tp1 = current + (atr * 2)
+    long_tp2 = current + (atr * 3)
+    
     short_entry = resistance - (resistance - support) * 0.2
     short_sl = current + (atr * 1.5)
-    short_tp = current - (atr * 2.5)
+    short_tp1 = current - (atr * 2)
+    short_tp2 = current - (atr * 3)
     
-    return f"""
-## {style}分析（{timeframe}）
+    return {
+        'long': {'entry': long_entry, 'sl': long_sl, 'tp1': long_tp1, 'tp2': long_tp2},
+        'short': {'entry': short_entry, 'sl': short_sl, 'tp1': short_tp1, 'tp2': short_tp2}
+    }
 
-**現在価格**: ${current:,.2f} ({change_pct:+.2f}%) | **RSI**: {rsi:.1f} | **ATR**: {atr:.2f}
+def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signal, atr, support, resistance, pivot, r1, s1, timeframe):
+    targets = calculate_targets_with_atr(current, atr, support, resistance)
+    
+    macd_trend = "🟢 買いシグナル" if macd > macd_signal else "🔴 売りシグナル"
+    
+    rr_long = (targets['long']['tp2'] - targets['long']['entry']) / (targets['long']['entry'] - targets['long']['sl']) if (targets['long']['entry'] - targets['long']['sl']) != 0 else 0
+    rr_short = (targets['short']['entry'] - targets['short']['tp2']) / (targets['short']['sl'] - targets['short']['entry']) if (targets['short']['sl'] - targets['short']['entry']) != 0 else 0
+    
+    if style == "スキャルピング":
+        return f"""
+## 💨 スキャルピング分析（{timeframe}）
 
-### 🟢 ロング戦略
-- エントリー: ${long_entry:,.2f} | 損切り: ${long_sl:,.2f} | 利確: ${long_tp:,.2f}
+### 📊 テクニカル状況
+- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
+- **RSI**: {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}
+- **MACD**: {macd_trend}
+- **ATR**: {atr:.2f}（ボラティリティ指標）
+- **ピボット**: ${pivot:,.2f}
 
-### 🔴 ショート戦略
-- エントリー: ${short_entry:,.2f} | 損切り: ${short_sl:,.2f} | 利確: ${short_tp:,.2f}
+### 🎯 高精度エントリー戦略
+
+#### 🟢 ロングの場合
+**エントリー条件：**
+- 価格が ${s1:,.2f}（S1）〜${pivot:,.2f}（ピボット）で反発
+- RSI < 40 かつ MACD上昇転換
+- ATRベースの最適タイミング
+
+**ポジション詳細：**
+- **エントリー**: ${targets['long']['entry']:,.2f}
+- **損切り（SL）**: ${targets['long']['sl']:,.2f}（ATR 1.5倍）
+- **利確1（50%）**: ${targets['long']['tp1']:,.2f}（ATR 2倍）
+- **利確2（50%）**: ${targets['long']['tp2']:,.2f}（ATR 3倍）
+- **リスクリワード**: 1:{rr_long:.2f}
+
+#### 🔴 ショートの場合
+**エントリー条件：**
+- 価格が ${pivot:,.2f}（ピボット）〜${r1:,.2f}（R1）で反落
+- RSI > 60 かつ MACD下降転換
+- ATRベースの最適タイミング
+
+**ポジション詳細：**
+- **エントリー**: ${targets['short']['entry']:,.2f}
+- **損切り（SL）**: ${targets['short']['sl']:,.2f}（ATR 1.5倍）
+- **利確1（50%）**: ${targets['short']['tp1']:,.2f}（ATR 2倍）
+- **利確2（50%）**: ${targets['short']['tp2']:,.2f}（ATR 3倍）
+- **リスクリワード**: 1:{rr_short:.2f}
+
+### ⚠️ 注意点
+- スプレッド考慮：エントリーは±3ドルの余裕を持つ
+- 経済指標30分前は避ける
+- 連続3回負けたら1時間休憩必須
+- ATRが平均の1.5倍以上の時は見送り
+"""
+    
+    elif style == "デイトレード":
+        return f"""
+## 📊 デイトレード分析（{timeframe}）
+
+### 📈 市場環境分析
+- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
+- **RSI**: {rsi:.1f}
+- **MACD**: {macd_trend}
+- **ATR**: {atr:.2f}
+- **ピボットポイント**: ${pivot:,.2f}
+- **レジスタンス**: R1=${r1:,.2f}
+- **サポート**: S1=${s1:,.2f}
+
+### トレンド判定
+{"📈 **強い上昇トレンド** - ロング優勢" if change_pct > 0.5 and macd > macd_signal else "📉 **強い下落トレンド** - ショート優勢" if change_pct < -0.5 and macd < macd_signal else "➡️ **レンジ相場** - ブレイクアウト待ち"}
+
+### 🎯 精密トレード戦略
+
+#### 🟢 ロングの場合
+**最適エントリーゾーン：**
+- ${s1:,.2f}〜${targets['long']['entry']:,.2f}
+- サポートでの反発確認後
+
+**段階的利確プラン：**
+- **第1目標（30%）**: ${targets['long']['tp1']:,.2f}
+- **第2目標（40%）**: ${pivot + atr:,.2f}
+- **第3目標（30%）**: ${targets['long']['tp2']:,.2f}
+
+**リスク管理：**
+- **損切り**: ${targets['long']['sl']:,.2f}
+- **最大許容損失**: 資金の1%以下
+- **リスクリワード**: 1:{rr_long:.2f}
+
+#### 🔴 ショートの場合
+**最適エントリーゾーン：**
+- ${targets['short']['entry']:,.2f}〜${r1:,.2f}
+- レジスタンスでの反落確認後
+
+**段階的利確プラン：**
+- **第1目標（30%）**: ${targets['short']['tp1']:,.2f}
+- **第2目標（40%）**: ${pivot - atr:,.2f}
+- **第3目標（30%）**: ${targets['short']['tp2']:,.2f}
+
+**リスク管理：**
+- **損切り**: ${targets['short']['sl']:,.2f}
+- **最大許容損失**: 資金の1%以下
+- **リスクリワード**: 1:{rr_short:.2f}
+
+### ⏰ 時間帯別戦略
+- **9:00-12:00（東京）**: トレンドフォロー、ボラティリティ低
+- **16:00-19:00（欧州）**: ブレイクアウト狙い、ボラティリティ増加
+- **22:00-02:00（NY）**: メインセッション、最も活発
+
+### 📊 当日の注意点
+- {"RSI買われすぎ、利確検討" if rsi > 70 else "RSI売られすぎ、押し目買い検討" if rsi < 30 else "RSI中立、トレンドに従う"}
+- ATRが{atr:.2f}なので、{"ボラティリティ高め、損切り幅を拡大" if atr > 15 else "ボラティリティ通常、標準的戦略で"}
+- ポジションは必ず当日中に決済
+"""
+    
+    else:
+        return f"""
+## 📈 スイングトレード分析（{timeframe}）
+
+### 🌍 マクロ環境
+- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
+- **週次トレンド**: {"上昇" if change_pct > 1 else "下降" if change_pct < -1 else "中立"}
+- **RSI**: {rsi:.1f}
+- **MACD**: {macd_trend}
+
+### 大局的トレンド分析
+{"🟢 **強気相場継続中** - 押し目買い戦略" if change_pct > 1.0 and macd > macd_signal else "🔴 **弱気相場継続中** - 戻り売り戦略" if change_pct < -1.0 and macd < macd_signal else "🟡 **調整局面** - レンジブレイク待ち"}
+
+### 🎯 中期ポジション戦略
+
+#### 🟢 ロングポジション
+**エントリー戦略：**
+- **最適ゾーン**: ${s1:,.2f}〜${support:,.2f}
+- **分割エントリー**: 3回に分けて建玉
+  - 1回目（40%）: ${support:,.2f}
+  - 2回目（30%）: ${s1:,.2f}
+  - 3回目（30%）: ${s1 - atr:,.2f}
+
+**利確プラン（3段階）：**
+- **第1目標（30%）**: ${pivot + atr * 2:,.0f}
+- **第2目標（40%）**: ${r1:,.0f}
+- **第3目標（30%）**: ${r1 + atr * 2:,.0f}
+
+**損切り：**
+- **絶対SL**: ${targets['long']['sl']:,.0f}
+- **トレーリングストップ**: 価格が${pivot:,.0f}突破後、ピボット-ATRに引き上げ
+
+**想定保有期間**: 3日〜2週間
+
+#### 🔴 ショートポジション
+**エントリー戦略：**
+- **最適ゾーン**: ${resistance:,.2f}〜${r1:,.2f}
+- **分割エントリー**: 3回に分けて建玉
+  - 1回目（40%）: ${resistance:,.2f}
+  - 2回目（30%）: ${r1:,.2f}
+  - 3回目（30%）: ${r1 + atr:,.2f}
+
+**利確プラン（3段階）：**
+- **第1目標（30%）**: ${pivot - atr * 2:,.0f}
+- **第2目標（40%）**: ${s1:,.0f}
+- **第3目標（30%）**: ${s1 - atr * 2:,.0f}
+
+**損切り：**
+- **絶対SL**: ${targets['short']['sl']:,.0f}
+- **トレーリングストップ**: 価格が${pivot:,.0f}下抜け後、ピボット+ATRに引き下げ
+
+**想定保有期間**: 3日〜2週間
+
+### 🌐 ファンダメンタル要因
+- 地政学リスク（中東情勢）→ 金価格上昇要因
+- FRB政策（利上げ観測）→ 金価格下落要因
+- インフレ率→ 金需要に影響
+- ドル相場→ 逆相関関係
+
+### 📅 今週の重要イベント
+- 経済指標発表日をチェック
+- FOMC議事録
+- 雇用統計
+
+### ⚠️ リスク管理
+- ポジションサイズ: 資金の2〜5%
+- 週末リスク: 金曜夕方までに50%利確検討
+- ニュースチェック: 毎日2回（朝・夕）必須
 """
 
 def display_trade_rules():
@@ -675,20 +884,6 @@ def display_trade_rules():
             st.markdown(f"**{idx}.** {rule}")
     else:
         st.info("💡 左サイドバーから自分のトレードルールを追加できます")
-
-def analyze_trade_simple(trade_data):
-    trade_type = trade_data['type']
-    entry = trade_data['entry_price']
-    exit = trade_data['exit_price']
-    pnl = (exit - entry) if trade_type == "ロング" else (entry - exit)
-    pnl_pct = (pnl / entry) * 100
-    
-    return f"""
-## 📊 トレード分析
-**損益**: ${pnl:,.2f} ({pnl_pct:+.2f}%)
-
-{'✅ 利益確保' if pnl > 0 else '⚠️ 損失発生'} - {'方向性は正しい' if pnl > 0 else 'エントリーまたは方向性の見直しが必要'}
-"""
 
 try:
     with st.spinner(f'📊 {selected_timeframe}データを取得中...'):
@@ -711,9 +906,13 @@ try:
     change = current - previous
     pct = (change / previous) * 100
     rsi = df['RSI'].iloc[-1]
+    macd = df['MACD'].iloc[-1]
+    macd_signal = df['Signal'].iloc[-1]
     atr = df['ATR'].iloc[-1]
     support, resistance = find_support_resistance(df)
     pivot = df['Pivot'].iloc[-1]
+    r1 = df['R1'].iloc[-1]
+    s1 = df['S1'].iloc[-1]
     
     st.session_state.current_price = current
     st.session_state.price_change = change
@@ -767,7 +966,7 @@ try:
     selected_analysis = st.selectbox("📊 分析タイプ", list(analysis_options.keys()), index=0)
     display_style = analysis_options[selected_analysis]
     
-    st.markdown(generate_analysis(display_style, current, pct, rsi, atr, support, resistance, pivot, selected_timeframe))
+    st.markdown(generate_advanced_analysis(display_style, current, pct, rsi, macd, macd_signal, atr, support, resistance, pivot, r1, s1, selected_timeframe))
     
     st.markdown("---")
     display_trade_rules()
