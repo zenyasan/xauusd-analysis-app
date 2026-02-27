@@ -25,7 +25,7 @@ st.markdown("""
     }
     
     .main .block-container {
-        padding-top: 15rem;
+        padding-top: 17rem;
         padding-bottom: 2rem;
         max-width: 1400px;
     }
@@ -77,7 +77,7 @@ st.markdown("""
             font-size: 0.7rem;
         }
         .main .block-container {
-            padding-top: 17rem;
+            padding-top: 19rem;
         }
     }
     
