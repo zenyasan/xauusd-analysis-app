@@ -867,3 +867,390 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - **週次トレンド**: {"上昇" if change_pct > 1 else "下降" if change_pct < -1 else "中立"}
 - **RSI (7)**: {rsi:.1f}
 - **MACD**: {macd_trend}
+
+### 大局的トレンド分析
+{"🟢 **強気相場継続中** - 押し目買い戦略" if change_pct > 1.0 and macd > macd_signal else "🔴 **弱気相場継続中** - 戻り売り戦略" if change_pct < -1.0 and macd < macd_signal else "🟡 **調整局面** - レンジブレイク待ち"}
+
+### 🎯 中期ポジション戦略
+
+#### 🟢 ロングポジション
+**エントリー戦略：**
+- **最適ゾーン**: ${s1:,.2f}〜${support:,.2f}
+- **分割エントリー**: 3回に分けて建玉
+  - 1回目（40%）: ${support:,.2f}
+  - 2回目（30%）: ${s1:,.2f}
+  - 3回目（30%）: ${s1 - atr:,.2f}
+
+**利確プラン（3段階）：**
+- **第1目標（30%）**: ${pivot + atr * 2:,.0f}
+- **第2目標（40%）**: ${r1:,.0f}
+- **第3目標（30%）**: ${r1 + atr * 2:,.0f}
+
+**損切り：**
+- **絶対SL**: ${targets['long']['sl']:,.0f}
+- **トレーリングストップ**: 価格が${pivot:,.0f}突破後、ピボット-ATRに引き上げ
+
+**想定保有期間**: 3日〜2週間
+
+#### 🔴 ショートポジション
+**エントリー戦略：**
+- **最適ゾーン**: ${resistance:,.2f}〜${r1:,.2f}
+- **分割エントリー**: 3回に分けて建玉
+  - 1回目（40%）: ${resistance:,.2f}
+  - 2回目（30%）: ${r1:,.2f}
+  - 3回目（30%）: ${r1 + atr:,.2f}
+
+**利確プラン（3段階）：**
+- **第1目標（30%）**: ${pivot - atr * 2:,.0f}
+- **第2目標（40%）**: ${s1:,.0f}
+- **第3目標（30%）**: ${s1 - atr * 2:,.0f}
+
+**損切り：**
+- **絶対SL**: ${targets['short']['sl']:,.0f}
+- **トレーリングストップ**: 価格が${pivot:,.0f}下抜け後、ピボット+ATRに引き下げ
+
+**想定保有期間**: 3日〜2週間
+
+### 🌐 ファンダメンタル要因
+- 地政学リスク（中東情勢）→ 金価格上昇要因
+- FRB政策（利上げ観測）→ 金価格下落要因
+- インフレ率→ 金需要に影響
+- ドル相場→ 逆相関関係
+
+### 📅 今週の重要イベント
+- 経済指標発表日をチェック
+- FOMC議事録
+- 雇用統計
+
+### ⚠️ リスク管理
+- ポジションサイズ: 資金の2〜5%
+- 週末リスク: 金曜夕方までに50%利確検討
+- ニュースチェック: 毎日2回（朝・夕）必須
+"""
+
+def display_trade_rules():
+    if st.session_state.trade_rules:
+        st.markdown("### 📋 あなたのトレードルール")
+        for idx, rule in enumerate(st.session_state.trade_rules, 1):
+            st.markdown(f"**{idx}.** {rule}")
+    else:
+        st.info("💡 左サイドバーから自分のトレードルールを追加できます")
+
+try:
+    with st.spinner(f'📊 {selected_timeframe}データを取得中...'):
+        realtime_price = get_realtime_gold_price()
+        data = get_gold_data(period, interval)
+        
+        if data is None or len(data) == 0:
+            st.error("❌ データ取得失敗")
+            st.stop()
+        
+        df = calculate_advanced_technicals(data)
+    
+    if realtime_price:
+        current = realtime_price
+        previous = data['Close'].iloc[-2]
+    else:
+        current = data['Close'].iloc[-1]
+        previous = data['Close'].iloc[-2]
+    
+    change = current - previous
+    pct = (change / previous) * 100
+    rsi = df['RSI'].iloc[-1]
+    macd = df['MACD'].iloc[-1]
+    macd_signal = df['Signal'].iloc[-1]
+    atr = df['ATR'].iloc[-1]
+    support, resistance = find_support_resistance(df)
+    pivot = df['Pivot'].iloc[-1]
+    r1 = df['R1'].iloc[-1]
+    s1 = df['S1'].iloc[-1]
+    
+    st.session_state.current_price = current
+    st.session_state.price_change = change
+    st.session_state.price_pct = pct
+    st.session_state.rsi_value = rsi
+    st.session_state.rsi_status = "買われすぎ" if rsi > 70 else "売られすぎ" if rsi < 30 else "中立"
+    st.session_state.support_value = support
+    st.session_state.resistance_value = resistance
+    
+    fig = go.Figure()
+    fig.add_trace(go.Candlestick(
+        x=df.index,
+        open=df['Open'],
+        high=df['High'],
+        low=df['Low'],
+        close=df['Close'],
+        name='XAUUSD',
+        increasing_line_color='#00aaff',
+        decreasing_line_color='#aa00ff'
+    ))
+    
+    fig.add_trace(go.Scatter(x=df.index, y=df['SMA_20'], name='SMA20', line=dict(color='#00aaff', width=2)))
+    if len(df) >= 50:
+        fig.add_trace(go.Scatter(x=df.index, y=df['SMA_50'], name='SMA50', line=dict(color='#0055ff', width=2)))
+    
+    fig.add_hline(y=support, line_dash="dash", line_color="#00ff88", annotation_text="サポート")
+    fig.add_hline(y=resistance, line_dash="dash", line_color="#ff0088", annotation_text="レジスタンス")
+    fig.add_hline(y=pivot, line_dash="dot", line_color="#ffaa00", annotation_text="ピボット")
+    
+    fig.update_layout(
+        title=f'📈 XAUUSD {selected_timeframe}チャート (JST)',
+        height=600,
+        xaxis_rangeslider_visible=False,
+        xaxis_title='時刻 (JST)',
+        template='plotly_dark',
+        paper_bgcolor='rgba(10,14,39,0.8)',
+        plot_bgcolor='rgba(10,14,39,0.5)',
+        font=dict(family='Rajdhani', color='#8b9dc3')
+    )
+    st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("---")
+    
+    analysis_options = {
+        "選択中": trade_style,
+        "スキャルピング": "スキャルピング",
+        "デイトレード": "デイトレード",
+        "スイングトレード": "スイングトレード"
+    }
+    
+    selected_analysis = st.selectbox("📊 分析タイプ", list(analysis_options.keys()), index=0)
+    display_style = analysis_options[selected_analysis]
+    
+    st.markdown(generate_advanced_analysis(display_style, current, pct, rsi, macd, macd_signal, atr, support, resistance, pivot, r1, s1, selected_timeframe))
+    
+    st.markdown("---")
+    display_trade_rules()
+    
+    st.markdown("---")
+    st.header("📝 トレード記録")
+    
+    tab1, tab2, tab3, tab4 = st.tabs(["記録追加", "📸 画像で追加", "記録管理", "統計分析"])
+    
+    with tab1:
+        with st.expander("新しいトレードを記録", expanded=False):
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                trade_date = st.date_input("日時")
+                trade_type = st.selectbox("タイプ", ["ロング", "ショート"])
+                entry_price = st.number_input("エントリー価格", value=float(current), format="%.2f")
+                exit_price = st.number_input("決済価格", value=float(current + 50 if trade_type == "ロング" else current - 50), format="%.2f")
+            
+            with col2:
+                lot_size = st.number_input("ロット数", value=0.01, format="%.2f")
+                entry_reason = st.text_area("エントリー理由", placeholder="例: RSI30で反発")
+                exit_reason = st.text_area("決済理由", placeholder="例: 利確目標到達")
+                emotion = st.selectbox("感情", ["冷静", "焦り", "自信", "不安", "興奮"])
+            
+            if st.button("💾 記録を保存"):
+                trade_data = {
+                    'date': str(trade_date),
+                    'type': trade_type,
+                    'entry_price': entry_price,
+                    'exit_price': exit_price,
+                    'lot_size': lot_size,
+                    'entry_reason': entry_reason,
+                    'exit_reason': exit_reason,
+                    'emotion': emotion
+                }
+                
+                st.session_state.trade_history.append(trade_data)
+                save_trades_to_file(st.session_state.trade_history)
+                st.success("✅ トレード記録を保存しました")
+                st.rerun()
+    
+    with tab2:
+        st.markdown("### 📸 MT5スクショから自動入力")
+        st.info("💡 MT5のポジション画面、オーダー画面、約定画面のスクリーンショットをアップロードしてください。")
+        
+        uploaded_file = st.file_uploader("画像をアップロード", type=['png', 'jpg', 'jpeg'], key="ocr_upload")
+        
+        if uploaded_file is not None:
+            image = Image.open(uploaded_file)
+            
+            col_img, col_result = st.columns([1, 1])
+            
+            with col_img:
+                st.image(image, caption="アップロードされた画像", use_container_width=True)
+            
+            with col_result:
+                if st.button("🔍 画像から情報を抽出"):
+                    with st.spinner("画像を解析中..."):
+                        ocr_result = extract_numbers_from_image(image)
+                        st.session_state.ocr_data = ocr_result
+                        
+                        st.success("✅ 抽出完了！")
+                        st.markdown(f"**検出されたトレードタイプ**: {ocr_result['type']}")
+                        
+                        if len(ocr_result['prices']) > 0:
+                            st.markdown("**検出された価格候補:**")
+                            for idx, price in enumerate(ocr_result['prices'][:5]):
+                                st.write(f"{idx+1}. ${price:,.2f}")
+                        
+                        if len(ocr_result['lots']) > 0:
+                            st.markdown("**検出されたロット候補:**")
+                            for idx, lot in enumerate(ocr_result['lots'][:3]):
+                                st.write(f"{idx+1}. {lot}")
+        
+        if st.session_state.ocr_data is not None:
+            st.markdown("---")
+            st.markdown("### 📝 抽出データを確認・修正")
+            
+            ocr_col1, ocr_col2 = st.columns(2)
+            
+            with ocr_col1:
+                ocr_trade_date = st.date_input("日時", key="ocr_date")
+                ocr_trade_type = st.selectbox("タイプ", ["ロング", "ショート"], 
+                                              index=0 if st.session_state.ocr_data['type'] == "ロング" else 1, 
+                                              key="ocr_type")
+                
+                if len(st.session_state.ocr_data['prices']) >= 2:
+                    ocr_entry = st.number_input("エントリー価格", 
+                                                value=float(st.session_state.ocr_data['prices'][0]), 
+                                                format="%.2f", key="ocr_entry")
+                    ocr_exit = st.number_input("決済価格", 
+                                              value=float(st.session_state.ocr_data['prices'][1]), 
+                                              format="%.2f", key="ocr_exit")
+                else:
+                    ocr_entry = st.number_input("エントリー価格", value=5000.0, format="%.2f", key="ocr_entry")
+                    ocr_exit = st.number_input("決済価格", value=5050.0, format="%.2f", key="ocr_exit")
+            
+            with ocr_col2:
+                if len(st.session_state.ocr_data['lots']) > 0:
+                    ocr_lot = st.number_input("ロット数", 
+                                             value=float(st.session_state.ocr_data['lots'][0]), 
+                                             format="%.2f", key="ocr_lot")
+                else:
+                    ocr_lot = st.number_input("ロット数", value=0.01, format="%.2f", key="ocr_lot")
+                
+                ocr_entry_reason = st.text_area("エントリー理由", placeholder="例: RSI30で反発", key="ocr_reason_entry")
+                ocr_exit_reason = st.text_area("決済理由", placeholder="例: 利確目標到達", key="ocr_reason_exit")
+                ocr_emotion = st.selectbox("感情", ["冷静", "焦り", "自信", "不安", "興奮"], key="ocr_emotion")
+            
+            if st.button("💾 OCRデータを保存", key="save_ocr"):
+                trade_data = {
+                    'date': str(ocr_trade_date),
+                    'type': ocr_trade_type,
+                    'entry_price': ocr_entry,
+                    'exit_price': ocr_exit,
+                    'lot_size': ocr_lot,
+                    'entry_reason': ocr_entry_reason,
+                    'exit_reason': ocr_exit_reason,
+                    'emotion': ocr_emotion
+                }
+                
+                st.session_state.trade_history.append(trade_data)
+                save_trades_to_file(st.session_state.trade_history)
+                st.session_state.ocr_data = None
+                st.success("✅ トレード記録を保存しました")
+                st.rerun()
+    
+    with tab3:
+        if st.session_state.trade_history:
+            st.markdown(f"### 📚 トレード記録（{len(st.session_state.trade_history)}件）")
+            
+            col_a, col_b, col_c = st.columns([2, 2, 2])
+            with col_a:
+                if st.button("📦 今月をアーカイブ"):
+                    if archive_current_month(st.session_state.trade_history):
+                        st.session_state.trade_history = []
+                        save_trades_to_file(st.session_state.trade_history)
+                        st.success("✅ アーカイブしました")
+                        st.rerun()
+            
+            with col_b:
+                if st.button("🗑️ 選択削除"):
+                    if st.session_state.selected_trades:
+                        st.session_state.trade_history = [t for i, t in enumerate(st.session_state.trade_history) if i not in st.session_state.selected_trades]
+                        save_trades_to_file(st.session_state.trade_history)
+                        st.session_state.selected_trades = []
+                        st.success("✅ 削除しました")
+                        st.rerun()
+            
+            with col_c:
+                if st.button("⚠️ 全削除"):
+                    st.session_state.show_delete_confirm = True
+            
+            if 'show_delete_confirm' in st.session_state and st.session_state.show_delete_confirm:
+                st.warning("⚠️ 本当に全て削除しますか？この操作は取り消せません。")
+                col_yes, col_no = st.columns(2)
+                with col_yes:
+                    if st.button("はい、削除します"):
+                        st.session_state.trade_history = []
+                        save_trades_to_file(st.session_state.trade_history)
+                        st.session_state.show_delete_confirm = False
+                        st.success("✅ 全て削除しました")
+                        st.rerun()
+                with col_no:
+                    if st.button("いいえ、キャンセル"):
+                        st.session_state.show_delete_confirm = False
+                        st.rerun()
+            
+            for idx, trade in enumerate(st.session_state.trade_history[-20:]):
+                pnl = (trade['exit_price'] - trade['entry_price']) if trade['type'] == "ロング" else (trade['entry_price'] - trade['exit_price'])
+                col_check, col_info = st.columns([1, 9])
+                with col_check:
+                    if st.checkbox("", key=f"trade_{idx}"):
+                        if idx not in st.session_state.selected_trades:
+                            st.session_state.selected_trades.append(idx)
+                with col_info:
+                    st.markdown(f"**{trade['date']}** - {trade['type']} - 損益: ${pnl:.2f}")
+            
+            archive_months = get_archive_months()
+            if archive_months:
+                st.markdown("### 📁 アーカイブ")
+                selected_month = st.selectbox("月を選択", archive_months)
+                if st.button("表示"):
+                    archived_trades = load_trades_from_file(month=selected_month)
+                    if archived_trades:
+                        for trade in archived_trades:
+                            pnl = (trade['exit_price'] - trade['entry_price']) if trade['type'] == "ロング" else (trade['entry_price'] - trade['exit_price'])
+                            st.markdown(f"**{trade['date']}** - {trade['type']} - ${pnl:.2f}")
+        else:
+            st.info("トレード記録がありません")
+    
+    with tab4:
+        if st.session_state.trade_history:
+            stats = calculate_trade_statistics(st.session_state.trade_history)
+            
+            if stats:
+                col1, col2, col3, col4 = st.columns(4)
+                with col1:
+                    st.metric("勝率", f"{stats['win_rate']:.1f}%")
+                with col2:
+                    st.metric("総損益", f"${stats['net_profit']:.2f}")
+                with col3:
+                    st.metric("PF", f"{stats['profit_factor']:.2f}")
+                with col4:
+                    st.metric("総トレード", stats['total'])
+                
+                st.markdown(generate_harsh_feedback(stats))
+                st.markdown(generate_advice(stats))
+        else:
+            st.info("統計分析にはトレードデータが必要です")
+    
+    st.markdown("---")
+    jst = pytz.timezone('Asia/Tokyo')
+    now_jst = datetime.now(jst)
+    st.caption(f"⏰ 最終更新: {now_jst.strftime('%Y年%m月%d日 %H:%M:%S')} JST")
+    
+    if st.button("🔄 今すぐ更新", use_container_width=True):
+        st.cache_data.clear()
+        st.rerun()
+
+except Exception as e:
+    st.error(f"❌ エラー: {e}")
+
+st.sidebar.markdown("---")
+st.sidebar.info(f"""
+**設定:**
+時間足: {selected_timeframe}
+スタイル: {trade_style}
+ルール: {len(st.session_state.trade_rules)}件
+記録: {len(st.session_state.trade_history)}件
+""")
+
+if auto_refresh:
+    time.sleep(refresh_interval)
+    st.rerun()
