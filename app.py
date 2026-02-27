@@ -23,7 +23,7 @@ st.markdown("""
     }
     
     .main .block-container {
-        padding-top: 8rem;
+        padding-top: 13rem;
         padding-bottom: 2rem;
         max-width: 1400px;
     }
@@ -35,7 +35,7 @@ st.markdown("""
         right: 0;
         z-index: 9999;
         background: linear-gradient(135deg, #0a0e27 0%, #1a1d3a 100%);
-        padding: 1rem 2rem;
+        padding: 1.5rem 2rem 1rem 2rem;
         border-bottom: 2px solid rgba(0, 170, 255, 0.3);
         box-shadow: 0 4px 30px rgba(0, 170, 255, 0.3);
         backdrop-filter: blur(10px);
@@ -70,6 +70,9 @@ st.markdown("""
         }
         .sticky-subtitle {
             font-size: 0.8rem;
+        }
+        .main .block-container {
+            padding-top: 15rem;
         }
     }
     
@@ -547,7 +550,7 @@ st.markdown(f'''
             <div style="font-size: 0.7rem; color: #8b9dc3;">{st.session_state.price_change:+.2f} ({st.session_state.price_pct:+.2f}%)</div>
         </div>
         <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 10px; padding: 0.5rem; text-align: center;">
-            <div style="font-size: 0.7rem; color: #8b9dc3;">📈 RSI (14)</div>
+            <div style="font-size: 0.7rem; color: #8b9dc3;">📈 RSI (7)</div>
             <div style="font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{st.session_state.rsi_value:.1f}</div>
             <div style="font-size: 0.7rem; color: #8b9dc3;">{st.session_state.rsi_status}</div>
         </div>
@@ -649,8 +652,8 @@ def calculate_advanced_technicals(data):
     df['SMA_50'] = df['Close'].rolling(window=50).mean()
     
     delta = df['Close'].diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+    gain = (delta.where(delta > 0, 0)).rolling(window=7).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=7).mean()
     rs = gain / loss
     df['RSI'] = 100 - (100 / (1 + rs))
     
@@ -708,7 +711,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 
 ### 📊 テクニカル状況
 - **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
-- **RSI**: {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}
+- **RSI (7)**: {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}
 - **MACD**: {macd_trend}
 - **ATR**: {atr:.2f}（ボラティリティ指標）
 - **ピボット**: ${pivot:,.2f}
@@ -754,7 +757,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 
 ### 📈 市場環境分析
 - **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
-- **RSI**: {rsi:.1f}
+- **RSI (7)**: {rsi:.1f}
 - **MACD**: {macd_trend}
 - **ATR**: {atr:.2f}
 - **ピボットポイント**: ${pivot:,.2f}
@@ -814,7 +817,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 ### 🌍 マクロ環境
 - **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
 - **週次トレンド**: {"上昇" if change_pct > 1 else "下降" if change_pct < -1 else "中立"}
-- **RSI**: {rsi:.1f}
+- **RSI (7)**: {rsi:.1f}
 - **MACD**: {macd_trend}
 
 ### 大局的トレンド分析
