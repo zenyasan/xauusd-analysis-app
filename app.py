@@ -29,7 +29,7 @@ st.markdown("""
     }
     
     .main .block-container {
-        padding-top: 40rem;
+        padding-top: 50rem;
         padding-bottom: 2rem;
         max-width: 1400px;
     }
