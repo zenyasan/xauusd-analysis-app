@@ -873,7 +873,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
         st.markdown(analysis)
         
-        st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
             st.markdown("**現在価格の変動率** - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -883,7 +882,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
         st.markdown(analysis2)
         
-        st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
             st.markdown("**RSI (7)** - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -913,7 +911,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
         st.markdown(analysis5)
         
-        st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
             st.markdown("**ピボットポイント** - 前日の高値・安値・終値から計算される基準価格。トレーダーが注目するポイント / S1（サポート1）: 第1サポートライン（下値支持） / R1（レジスタンス1）: 第1レジスタンスライン（上値抵抗）")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -1432,7 +1429,6 @@ try:
                 st.markdown(generate_harsh_feedback(stats))
                 
                 # PF用語解説
-                st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
                 with st.expander("ℹ️ プロフィットファクター（PF）とは", expanded=False):
                     st.markdown("""
 **プロフィットファクター（PF）の見方**
