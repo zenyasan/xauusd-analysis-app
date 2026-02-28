@@ -444,8 +444,8 @@ def extract_fxgt_trade_from_image(image):
         lot_match = re.search(lot_pattern, full_text, re.IGNORECASE)
         lot = float(lot_match.group(1)) if lot_match else 0.01
         
-        # エントリー価格 → 決済価格
-        price_pattern = r'([\d,]+\.[\d]+)\s*[→->]\s*([\d,]+\.[\d]+)'
+        # エントリー価格 → 決済価格（修正済み）
+        price_pattern = r'([\d,]+\.[\d]+)\s*(?:→|->)\s*([\d,]+\.[\d]+)'
         price_match = re.search(price_pattern, full_text)
         if price_match:
             entry_price = float(price_match.group(1).replace(',', ''))
@@ -454,8 +454,8 @@ def extract_fxgt_trade_from_image(image):
             entry_price = 0
             exit_price = 0
         
-        # 日時
-        time_pattern = r'(\d{4})[./](\d{2})[./](\d{2})\s+(\d{2}):(\d{2}):(\d{2})\s*[→->]\s*(\d{4})[./](\d{2})[./](\d{2})\s+(\d{2}):(\d{2}):(\d{2})'
+        # 日時（修正済み）
+        time_pattern = r'(\d{4})[./](\d{2})[./](\d{2})\s+(\d{2}):(\d{2}):(\d{2})\s*(?:→|->)\s*(\d{4})[./](\d{2})[./](\d{2})\s+(\d{2}):(\d{2}):(\d{2})'
         time_match = re.search(time_pattern, full_text)
         if time_match:
             entry_date = f"{time_match.group(1)}-{time_match.group(2)}-{time_match.group(3)}"
