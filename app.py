@@ -13,6 +13,9 @@ from collections import defaultdict
 from PIL import Image
 import re
 
+# 定数定義
+GOLD_FUTURES_ADJUSTMENT = 29.0  # 先物とスポットの価格差
+
 st.set_page_config(page_title="XAUUSD分析", page_icon="💰", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown("""
@@ -25,7 +28,7 @@ st.markdown("""
     }
     
     .main .block-container {
-        padding-top: 17rem;
+        padding-top: 19rem;
         padding-bottom: 2rem;
         max-width: 1400px;
     }
@@ -77,7 +80,7 @@ st.markdown("""
             font-size: 0.5rem;
         }
         .main .block-container {
-            padding-top: 19rem;
+            padding-top: 21rem;
         }
     }
     
@@ -231,6 +234,21 @@ st.markdown("""
         box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
     }
     
+    .explanation-expander .streamlit-expanderHeader {
+        font-size: 0.7rem !important;
+        background: rgba(0, 170, 255, 0.15) !important;
+        color: #c0c0c0 !important;
+        padding: 0.3rem 0.5rem !important;
+        font-weight: 600 !important;
+    }
+    
+    .explanation-expander .streamlit-expanderContent {
+        font-size: 0.7rem !important;
+        color: #a0a0a0 !important;
+        background: rgba(0, 170, 255, 0.05) !important;
+        padding: 0.5rem !important;
+    }
+    
     .stAlert {
         background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%);
         border-left: 4px solid #00aaff;
@@ -311,6 +329,14 @@ st.markdown("""
     .stCheckbox {
         color: #00aaff !important;
     }
+    
+    .note-text {
+        color: #8b9dc3;
+        font-size: 0.75rem;
+        margin-left: 1rem;
+        margin-top: 0.2rem;
+        display: block;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -385,45 +411,83 @@ def archive_current_month(trades):
     save_trades_to_file(trades, month=current_month)
     return True
 
-def extract_numbers_from_image(image):
-    """画像から数値を抽出する簡易OCR（Pytesseract不使用版）"""
+def extract_fxgt_trade_from_image(image):
+    """FXGTのMT5スクショから取引情報を抽出"""
     try:
         import easyocr
-        reader = easyocr.Reader(['en', 'ja'])
+        reader = easyocr.Reader(['en'])
         result = reader.readtext(image)
         
-        extracted_text = " ".join([text[1] for text in result])
+        full_text = " ".join([text[1] for text in result])
         
-        numbers = re.findall(r'\d+\.?\d*', extracted_text)
-        prices = [float(num) for num in numbers if float(num) > 1000 and float(num) < 10000]
-        lots = [float(num) for num in numbers if float(num) > 0 and float(num) < 100]
+        # タイプ（buy/sell）
+        trade_type = "ロング" if "buy" in full_text.lower() else "ショート"
         
-        trade_type = "ロング"
-        if any(word in extracted_text.upper() for word in ['SELL', 'SHORT', 'ショート', '売']):
-            trade_type = "ショート"
-        elif any(word in extracted_text.upper() for word in ['BUY', 'LONG', 'ロング', '買']):
-            trade_type = "ロング"
+        # ロット数
+        lot_pattern = r'(?:buy|sell)\s+([\d.]+)'
+        lot_match = re.search(lot_pattern, full_text, re.IGNORECASE)
+        lot = float(lot_match.group(1)) if lot_match else 0.01
+        
+        # エントリー価格 → 決済価格
+        price_pattern = r'([\d,]+\.[\d]+)\s*[→->]\s*([\d,]+\.[\d]+)'
+        price_match = re.search(price_pattern, full_text)
+        if price_match:
+            entry_price = float(price_match.group(1).replace(',', ''))
+            exit_price = float(price_match.group(2).replace(',', ''))
+        else:
+            entry_price = 0
+            exit_price = 0
+        
+        # 日時
+        time_pattern = r'(\d{4})[./](\d{2})[./](\d{2})\s+(\d{2}):(\d{2}):(\d{2})\s*[→->]\s*(\d{4})[./](\d{2})[./](\d{2})\s+(\d{2}):(\d{2}):(\d{2})'
+        time_match = re.search(time_pattern, full_text)
+        if time_match:
+            entry_date = f"{time_match.group(1)}-{time_match.group(2)}-{time_match.group(3)}"
+            entry_time = f"{time_match.group(4)}:{time_match.group(5)}:{time_match.group(6)}"
+            exit_date = f"{time_match.group(7)}-{time_match.group(8)}-{time_match.group(9)}"
+            exit_time = f"{time_match.group(10)}:{time_match.group(11)}:{time_match.group(12)}"
+        else:
+            entry_date = datetime.now().strftime('%Y-%m-%d')
+            entry_time = "00:00:00"
+            exit_date = entry_date
+            exit_time = "00:00:00"
         
         return {
             'type': trade_type,
-            'prices': prices[:5] if len(prices) > 0 else [5000.0, 5050.0],
-            'lots': lots[:3] if len(lots) > 0 else [0.01],
-            'raw_text': extracted_text
+            'lot': lot,
+            'entry_price': entry_price,
+            'exit_price': exit_price,
+            'entry_date': entry_date,
+            'entry_time': entry_time,
+            'exit_date': exit_date,
+            'exit_time': exit_time,
+            'raw_text': full_text
         }
     except ImportError:
-        return simple_number_extraction(image)
+        return {
+            'type': 'ロング',
+            'lot': 0.01,
+            'entry_price': 0,
+            'exit_price': 0,
+            'entry_date': datetime.now().strftime('%Y-%m-%d'),
+            'entry_time': "00:00:00",
+            'exit_date': datetime.now().strftime('%Y-%m-%d'),
+            'exit_time': "00:00:00",
+            'raw_text': 'OCRライブラリが利用できません。手動で入力してください。'
+        }
     except Exception as e:
         st.error(f"OCRエラー: {e}")
-        return simple_number_extraction(image)
-
-def simple_number_extraction(image):
-    """OCRライブラリなしのフォールバック"""
-    return {
-        'type': 'ロング',
-        'prices': [5000.0, 5050.0],
-        'lots': [0.01],
-        'raw_text': 'OCRライブラリが利用できません。手動で入力してください。'
-    }
+        return {
+            'type': 'ロング',
+            'lot': 0.01,
+            'entry_price': 0,
+            'exit_price': 0,
+            'entry_date': datetime.now().strftime('%Y-%m-%d'),
+            'entry_time': "00:00:00",
+            'exit_date': datetime.now().strftime('%Y-%m-%d'),
+            'exit_time': "00:00:00",
+            'raw_text': f'エラー: {str(e)}'
+        }
 
 def calculate_trade_statistics(trades):
     if not trades:
@@ -663,18 +727,10 @@ if st.session_state.trade_rules:
 @st.cache_data(ttl=30)
 def get_realtime_gold_price():
     try:
-        response = requests.get("https://api.metals.live/v1/spot/gold", timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            return float(data[0]['price'])
-    except:
-        pass
-    
-    try:
         ticker = yf.Ticker("GC=F")
         latest = ticker.history(period="1d", interval="1m")
         if len(latest) > 0:
-            return latest['Close'].iloc[-1]
+            return latest['Close'].iloc[-1] - GOLD_FUTURES_ADJUSTMENT
     except:
         pass
     
@@ -690,6 +746,12 @@ def get_gold_data(period, interval):
             if data.index.tz is None:
                 data.index = data.index.tz_localize('UTC')
             data.index = data.index.tz_convert('Asia/Tokyo')
+            
+            # 先物価格からスポット価格相当に補正
+            data['Open'] = data['Open'] - GOLD_FUTURES_ADJUSTMENT
+            data['High'] = data['High'] - GOLD_FUTURES_ADJUSTMENT
+            data['Low'] = data['Low'] - GOLD_FUTURES_ADJUSTMENT
+            data['Close'] = data['Close'] - GOLD_FUTURES_ADJUSTMENT
         
         return data
     except Exception as e:
@@ -758,17 +820,50 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
     rr_short = (targets['short']['entry'] - targets['short']['tp2']) / (targets['short']['sl'] - targets['short']['entry']) if (targets['short']['sl'] - targets['short']['entry']) != 0 else 0
     
     if style == "スキャルピング":
-        return f"""
+        analysis = f"""
 ## 💨 スキャルピング分析（{timeframe}）
 
 ### 📊 テクニカル状況
-- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
-- **RSI (7)**: {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}
-- **MACD**: {macd_trend}
+
+- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)"""
+        
+        st.markdown(analysis)
+        
+        with st.expander("ℹ️ 用語解説", expanded=False):
+            st.markdown("""
+**現在価格の変動率**
+- **プラス（+）**: 前の時間帯より上昇 → 上昇トレンドの可能性が高い
+- **マイナス（-）**: 前の時間帯より下落 → 下落トレンドの可能性が高い
+""")
+        
+        analysis2 = f"""
+- **RSI (7)**: {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}"""
+        
+        st.markdown(analysis2)
+        
+        with st.expander("ℹ️ 用語解説", expanded=False):
+            st.markdown("""
+**RSI (7) - 相対力指数**
+- **70以上**: 買われすぎ → 売りを検討（価格が下がる可能性）
+- **30以下**: 売られすぎ → 買いを検討（価格が上がる可能性）
+- **40-60**: 中立 → トレンドに従って判断
+""")
+        
+        analysis3 = f"""
+- **MACD**: {macd_trend}"""
+        
+        st.markdown(analysis3)
+        
+        with st.expander("ℹ️ 用語解説", expanded=False):
+            st.markdown("""
+**MACD - 移動平均収束拡散**
+- **🟢 買いシグナル**: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり
+- **🔴 売りシグナル**: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり
+""")
+        
+        analysis4 = f"""
 - **ATR**: {atr:.2f}（ボラティリティ指標）
 - **ピボット**: ${pivot:,.2f}
-
-""", f"""
 
 ### 🎯 高精度エントリー戦略
 
@@ -799,43 +894,39 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - **リスクリワード**: 1:{rr_short:.2f}
 
 ### ⚠️ 注意点
-- スプレッド考慮：エントリーは±3ドルの余裕を持つ
-- 経済指標30分前は避ける
-- 連続3回負けたら1時間休憩必須
-- ATRが平均の1.5倍以上の時は見送り
-""", """
-### ℹ️ 用語解説
 
-**現在価格の変動率**
-- **プラス（+）**: 前の時間帯より上昇 → 上昇トレンドの可能性が高い
-- **マイナス（-）**: 前の時間帯より下落 → 下落トレンドの可能性が高い
+- **スプレッド考慮：エントリーは±3ドルの余裕を持つ**
+<small class="note-text">→ ブローカーのスプレッドは2-5ドル程度。エントリー価格から±3ドルの範囲で約定されることを想定</small>
 
-**RSI (7) - 相対力指数**
-- **70以上**: 買われすぎ → 売りを検討（価格が下がる可能性）
-- **30以下**: 売られすぎ → 買いを検討（価格が上がる可能性）
-- **40-60**: 中立 → トレンドに従って判断
+- **経済指標30分前は避ける**
+<small class="note-text">→ 雇用統計、GDP、FOMC発表などの重要指標前後は価格が急変動。Investing.comで経済カレンダーを確認</small>
 
-**MACD - 移動平均収束拡散**
-- **🟢 買いシグナル**: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり
-- **🔴 売りシグナル**: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり
+- **連続3回負けたら1時間休憩必須**
+<small class="note-text">→ コンビニまで歩いてみる、一旦画面から離れる、画面をオフにする、深呼吸する</small>
 
-**ATR - 平均真の範囲**
-- ボラティリティ（価格変動の大きさ）を測る指標
-- **数値が大きい**: 値動きが激しい → 損切り幅を広くする
-- **数値が小さい**: 値動きが穏やか → 通常の戦略で
-
-**ピボットポイント**
-- 前日の高値・安値・終値から計算される基準価格
-- **S1（サポート1）**: 第1サポートライン（下値支持）
-- **R1（レジスタンス1）**: 第1レジスタンスライン（上値抵抗）
+- **ATRが平均の1.5倍以上の時は見送り**
+<small class="note-text">→ 通常ATRが10-15の場合、22以上なら見送り。ボラティリティが高すぎて損切りに引っかかりやすい</small>
 """
+        st.markdown(analysis4, unsafe_allow_html=True)
     
     elif style == "デイトレード":
-        return f"""
+        analysis = f"""
 ## 📊 デイトレード分析（{timeframe}）
 
 ### 📈 市場環境分析
-- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
+
+- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)"""
+        
+        st.markdown(analysis)
+        
+        with st.expander("ℹ️ 用語解説", expanded=False):
+            st.markdown("""
+**現在価格の変動率について**
+- **プラス（+）**: 前の時間帯より上昇 → 上昇トレンドの可能性
+- **マイナス（-）**: 前の時間帯より下落 → 下落トレンドの可能性
+""")
+        
+        analysis2 = f"""
 - **RSI (7)**: {rsi:.1f}
 - **MACD**: {macd_trend}
 - **ATR**: {atr:.2f}
@@ -845,9 +936,18 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 
 ### トレンド判定
 {"📈 **強い上昇トレンド** - ロング優勢" if change_pct > 0.5 and macd > macd_signal else "📉 **強い下落トレンド** - ショート優勢" if change_pct < -0.5 and macd < macd_signal else "➡️ **レンジ相場** - ブレイクアウト待ち"}
-
-""", f"""
-
+"""
+        st.markdown(analysis2)
+        
+        with st.expander("ℹ️ 用語解説", expanded=False):
+            st.markdown("""
+**トレンド判定について**
+- **強い上昇トレンド**: 価格が継続的に上がっている → ロング（買い）が有利
+- **強い下落トレンド**: 価格が継続的に下がっている → ショート（売り）が有利
+- **レンジ相場**: 価格が一定範囲内で上下 → ブレイクアウト（範囲を抜ける瞬間）を待つ
+""")
+        
+        analysis3 = f"""
 ### 🎯 精密トレード戦略
 
 #### 🟢 ロングの場合
@@ -889,32 +989,11 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - {"RSI買われすぎ、利確検討" if rsi > 70 else "RSI売られすぎ、押し目買い検討" if rsi < 30 else "RSI中立、トレンドに従う"}
 - ATRが{atr:.2f}なので、{"ボラティリティ高め、損切り幅を拡大" if atr > 15 else "ボラティリティ通常、標準的戦略で"}
 - ポジションは必ず当日中に決済
-""", """
-### ℹ️ 用語解説
-
-**トレンド判定について**
-- **強い上昇トレンド**: 価格が継続的に上がっている → ロング（買い）が有利
-- **強い下落トレンド**: 価格が継続的に下がっている → ショート（売り）が有利
-- **レンジ相場**: 価格が一定範囲内で上下 → ブレイクアウト（範囲を抜ける瞬間）を待つ
-
-**段階的利確とは**
-- ポジションを一度に決済せず、3回に分けて利益確定すること
-- 例：30%を第1目標で決済、40%を第2目標で決済、残り30%を第3目標で決済
-- **メリット**: 利益を確保しつつ、さらなる上昇も狙える
-
-**リスクリワード比率**
-- 損失額に対する利益額の比率
-- **1:2以上が理想**: 10ドルリスクを取って20ドル以上の利益を狙う
-- これにより勝率が50%でも利益が出る
-
-**時間帯別の特徴**
-- **東京時間**: 比較的穏やか、トレンドフォロー（流れに乗る）が基本
-- **欧州時間**: 動きが活発になる、ブレイクアウト（急激な価格変動）が起きやすい
-- **NY時間**: 最も取引量が多い、大きなトレンドが発生しやすい
 """
+        st.markdown(analysis3)
     
     else:
-        return f"""
+        analysis = f"""
 ## 📈 スイングトレード分析（{timeframe}）
 
 ### 🌍 マクロ環境
@@ -925,8 +1004,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 
 ### 大局的トレンド分析
 {"🟢 **強気相場継続中** - 押し目買い戦略" if change_pct > 1.0 and macd > macd_signal else "🔴 **弱気相場継続中** - 戻り売り戦略" if change_pct < -1.0 and macd < macd_signal else "🟡 **調整局面** - レンジブレイク待ち"}
-
-""", f"""
 
 ### 🎯 中期ポジション戦略
 
@@ -983,32 +1060,8 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - ポジションサイズ: 資金の2〜5%
 - 週末リスク: 金曜夕方までに50%利確検討
 - ニュースチェック: 毎日2回（朝・夕）必須
-""", """
-### ℹ️ 用語解説
-
-**マクロ環境とは**
-- 市場全体に影響を与える大きな要因のこと
-- 金融政策、地政学リスク、経済指標など
-
-**押し目買い vs 戻り売り**
-- **押し目買い**: 上昇トレンド中の一時的な下落で買う戦略
-- **戻り売り**: 下落トレンド中の一時的な上昇で売る戦略
-
-**分割エントリーのメリット**
-- 一度に全額投資せず、3回に分けてポジションを取る
-- **メリット**: 平均取得価格を有利にできる、リスクを分散できる
-- **例**: 1回目で40%、価格が下がったら2回目で30%、さらに下がったら3回目で30%
-
-**トレーリングストップとは**
-- 価格の動きに合わせて損切りラインを移動させる手法
-- **例**: 価格が上昇したら、損切りラインも上げていく
-- **メリット**: 利益を確保しながら、さらなる上昇も狙える
-
-**ファンダメンタル要因**
-- **地政学リスク**: 戦争や紛争 → 安全資産の金が買われる
-- **FRB政策**: 金利上昇 → ドル高 → 金価格下落
-- **インフレ**: 物価上昇 → 金が買われる（インフレヘッジ）
 """
+        st.markdown(analysis)
 
 def display_trade_rules():
     if st.session_state.trade_rules:
@@ -1097,6 +1150,7 @@ try:
     
     st.plotly_chart(fig, use_container_width=True)
     
+    st.caption(f"💡 価格表示について：先物価格（GC=F）から{GOLD_FUTURES_ADJUSTMENT:.0f}ドル補正してスポット価格相当を表示しています")
     st.caption(f"⏰ チャート最終データ: {latest_data_time.strftime('%Y年%m月%d日 %H:%M')} JST（約{time_diff_minutes:.0f}分前）")
     
     st.markdown("---")
@@ -1111,14 +1165,7 @@ try:
     selected_analysis = st.selectbox("📊 分析タイプ", list(analysis_options.keys()), index=0)
     display_style = analysis_options[selected_analysis]
     
-    analysis_text, strategy_text, explanation_text = generate_advanced_analysis(display_style, current, pct, rsi, macd, macd_signal, atr, support, resistance, pivot, r1, s1, selected_timeframe)
-    
-    st.markdown(analysis_text)
-    
-    with st.expander("ℹ️ 用語解説を見る"):
-        st.markdown(explanation_text)
-    
-    st.markdown(strategy_text)
+    generate_advanced_analysis(display_style, current, pct, rsi, macd, macd_signal, atr, support, resistance, pivot, r1, s1, selected_timeframe)
     
     st.markdown("---")
     display_trade_rules()
@@ -1163,7 +1210,28 @@ try:
     
     with tab2:
         st.markdown("### 📸 MT5スクショから自動入力")
-        st.info("💡 MT5のポジション画面、オーダー画面、約定画面のスクリーンショットをアップロードしてください。")
+        
+        st.info("""
+💡 **画像アップロードのヒント**
+
+**最も精度が高い画像：**
+- FXGT MT5のトレード詳細画面
+- スクリーンショット（Win + Shift + S / Cmd + Shift + 4）
+- PNG形式、解像度1920x1080以上推奨
+
+**精度を上げるコツ：**
+✅ MT5のトレード詳細画面だけを切り取る
+✅ 文字が鮮明に見える明るさ
+✅ エントリー価格 → 決済価格の形式
+❌ スマホで画面を撮影した写真
+❌ 低解像度・ボケた画像
+
+**読み取れる情報：**
+- トレードタイプ（buy → ロング、sell → ショート）
+- エントリー価格・決済価格
+- ロット数
+- エントリー・決済の日時（MT5表示時刻そのまま）
+""")
         
         uploaded_file = st.file_uploader("画像をアップロード", type=['png', 'jpg', 'jpeg'], key="ocr_upload")
         
@@ -1178,21 +1246,21 @@ try:
             with col_result:
                 if st.button("🔍 画像から情報を抽出"):
                     with st.spinner("画像を解析中..."):
-                        ocr_result = extract_numbers_from_image(image)
+                        ocr_result = extract_fxgt_trade_from_image(image)
                         st.session_state.ocr_data = ocr_result
                         
-                        st.success("✅ 抽出完了！")
-                        st.markdown(f"**検出されたトレードタイプ**: {ocr_result['type']}")
-                        
-                        if len(ocr_result['prices']) > 0:
-                            st.markdown("**検出された価格候補:**")
-                            for idx, price in enumerate(ocr_result['prices'][:5]):
-                                st.write(f"{idx+1}. ${price:,.2f}")
-                        
-                        if len(ocr_result['lots']) > 0:
-                            st.markdown("**検出されたロット候補:**")
-                            for idx, lot in enumerate(ocr_result['lots'][:3]):
-                                st.write(f"{idx+1}. {lot}")
+                        if ocr_result['entry_price'] > 0:
+                            st.success("✅ 抽出完了！")
+                            st.markdown(f"**トレードタイプ**: {ocr_result['type']}")
+                            st.markdown(f"**ロット**: {ocr_result['lot']}")
+                            st.markdown(f"**エントリー**: ${ocr_result['entry_price']:,.2f}")
+                            st.markdown(f"**決済**: ${ocr_result['exit_price']:,.2f}")
+                            st.markdown(f"**エントリー日時**: {ocr_result['entry_date']} {ocr_result['entry_time']}")
+                            st.markdown(f"**決済日時**: {ocr_result['exit_date']} {ocr_result['exit_time']}")
+                        else:
+                            st.warning("⚠️ 価格情報を抽出できませんでした。手動で入力してください。")
+                            with st.expander("デバッグ情報", expanded=False):
+                                st.text(ocr_result['raw_text'])
         
         if st.session_state.ocr_data is not None:
             st.markdown("---")
@@ -1201,29 +1269,24 @@ try:
             ocr_col1, ocr_col2 = st.columns(2)
             
             with ocr_col1:
-                ocr_trade_date = st.date_input("日時", key="ocr_date")
+                ocr_trade_date = st.date_input("日付", value=datetime.strptime(st.session_state.ocr_data['entry_date'], '%Y-%m-%d') if st.session_state.ocr_data['entry_date'] else datetime.now(), key="ocr_date")
+                ocr_entry_time = st.text_input("エントリー時刻（MT5表示）", value=st.session_state.ocr_data['entry_time'], key="ocr_entry_time")
+                ocr_exit_time = st.text_input("決済時刻（MT5表示）", value=st.session_state.ocr_data['exit_time'], key="ocr_exit_time")
                 ocr_trade_type = st.selectbox("タイプ", ["ロング", "ショート"], 
                                               index=0 if st.session_state.ocr_data['type'] == "ロング" else 1, 
                                               key="ocr_type")
                 
-                if len(st.session_state.ocr_data['prices']) >= 2:
-                    ocr_entry = st.number_input("エントリー価格", 
-                                                value=float(st.session_state.ocr_data['prices'][0]), 
-                                                format="%.2f", key="ocr_entry")
-                    ocr_exit = st.number_input("決済価格", 
-                                              value=float(st.session_state.ocr_data['prices'][1]), 
-                                              format="%.2f", key="ocr_exit")
-                else:
-                    ocr_entry = st.number_input("エントリー価格", value=5000.0, format="%.2f", key="ocr_entry")
-                    ocr_exit = st.number_input("決済価格", value=5050.0, format="%.2f", key="ocr_exit")
+                ocr_entry = st.number_input("エントリー価格", 
+                                            value=float(st.session_state.ocr_data['entry_price']), 
+                                            format="%.2f", key="ocr_entry")
+                ocr_exit = st.number_input("決済価格", 
+                                          value=float(st.session_state.ocr_data['exit_price']), 
+                                          format="%.2f", key="ocr_exit")
             
             with ocr_col2:
-                if len(st.session_state.ocr_data['lots']) > 0:
-                    ocr_lot = st.number_input("ロット数", 
-                                             value=float(st.session_state.ocr_data['lots'][0]), 
-                                             format="%.2f", key="ocr_lot")
-                else:
-                    ocr_lot = st.number_input("ロット数", value=0.01, format="%.2f", key="ocr_lot")
+                ocr_lot = st.number_input("ロット数", 
+                                         value=float(st.session_state.ocr_data['lot']), 
+                                         format="%.2f", key="ocr_lot")
                 
                 ocr_entry_reason = st.text_area("エントリー理由", placeholder="例: RSI30で反発", key="ocr_reason_entry")
                 ocr_exit_reason = st.text_area("決済理由", placeholder="例: 利確目標到達", key="ocr_reason_exit")
@@ -1232,6 +1295,8 @@ try:
             if st.button("💾 OCRデータを保存", key="save_ocr"):
                 trade_data = {
                     'date': str(ocr_trade_date),
+                    'entry_time': ocr_entry_time,
+                    'exit_time': ocr_exit_time,
                     'type': ocr_trade_type,
                     'entry_price': ocr_entry,
                     'exit_price': ocr_exit,
@@ -1296,7 +1361,8 @@ try:
                         if idx not in st.session_state.selected_trades:
                             st.session_state.selected_trades.append(idx)
                 with col_info:
-                    st.markdown(f"**{trade['date']}** - {trade['type']} - 損益: ${pnl:.2f}")
+                    time_info = f" {trade.get('entry_time', '')} - {trade.get('exit_time', '')}" if 'entry_time' in trade else ""
+                    st.markdown(f"**{trade['date']}{time_info}** - {trade['type']} - 損益: ${pnl:.2f}")
             
             archive_months = get_archive_months()
             if archive_months:
@@ -1307,7 +1373,8 @@ try:
                     if archived_trades:
                         for trade in archived_trades:
                             pnl = (trade['exit_price'] - trade['entry_price']) if trade['type'] == "ロング" else (trade['entry_price'] - trade['exit_price'])
-                            st.markdown(f"**{trade['date']}** - {trade['type']} - ${pnl:.2f}")
+                            time_info = f" {trade.get('entry_time', '')} - {trade.get('exit_time', '')}" if 'entry_time' in trade else ""
+                            st.markdown(f"**{trade['date']}{time_info}** - {trade['type']} - ${pnl:.2f}")
         else:
             st.info("トレード記録がありません")
     
