@@ -241,7 +241,8 @@ st.markdown("""
         color: #c0c0c0 !important;
         padding: 0.2rem 0.4rem !important;
         font-weight: 600 !important;
-        margin-top: 0.05rem !important;
+        margin-top: 0 !important;
+        margin-bottom: 0.3rem !important;
     }
     
     .explanation-expander .streamlit-expanderContent {
