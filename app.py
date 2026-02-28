@@ -234,6 +234,9 @@ st.markdown("""
         border-color: #00aaff;
         box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
     }
+.explanation-expander {
+        margin-top: -0.8rem !important;
+   }
     
     .explanation-expander .streamlit-expanderHeader {
         font-size: 0.4rem !important;
