@@ -2,3 +2,8 @@ streamlit
 yfinance
 pandas
 plotly
+pytz
+requests
+pillow
+easyocr
+opencv-python-headless
