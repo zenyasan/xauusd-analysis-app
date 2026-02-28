@@ -234,11 +234,11 @@ st.markdown("""
         border-color: #00aaff;
         box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
     }
-.explanation-expander {
+.stExpander {
         margin-top: -1.2rem !important;
    }
     
-    .explanation-expander .streamlit-expanderHeader {
+    .stExpander .streamlit-expanderHeader {
         font-size: 0.4rem !important;
         background: rgba(0, 170, 255, 0.15) !important;
         color: #c0c0c0 !important;
@@ -248,7 +248,7 @@ st.markdown("""
         margin-bottom: 0.3rem !important;
     }
     
-    .explanation-expander .streamlit-expanderContent {
+    .stExpander .streamlit-expanderContent {
         font-size: 0.4rem !important;
         color: #a0a0a0 !important;
         background: rgba(0, 170, 255, 0.05) !important;
