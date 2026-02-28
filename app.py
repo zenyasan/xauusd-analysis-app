@@ -12,6 +12,7 @@ import requests
 from collections import defaultdict
 from PIL import Image
 import re
+import io
 
 # 定数定義
 GOLD_FUTURES_ADJUSTMENT = 29.0  # 先物とスポットの価格差
@@ -28,7 +29,7 @@ st.markdown("""
     }
     
     .main .block-container {
-        padding-top: 19rem;
+        padding-top: 22rem;
         padding-bottom: 2rem;
         max-width: 1400px;
     }
@@ -80,7 +81,7 @@ st.markdown("""
             font-size: 0.5rem;
         }
         .main .block-container {
-            padding-top: 21rem;
+            padding-top: 24rem;
         }
     }
     
@@ -235,18 +236,20 @@ st.markdown("""
     }
     
     .explanation-expander .streamlit-expanderHeader {
-        font-size: 0.7rem !important;
+        font-size: 0.4rem !important;
         background: rgba(0, 170, 255, 0.15) !important;
         color: #c0c0c0 !important;
-        padding: 0.3rem 0.5rem !important;
+        padding: 0.2rem 0.4rem !important;
         font-weight: 600 !important;
+        margin-top: 0.05rem !important;
     }
     
     .explanation-expander .streamlit-expanderContent {
-        font-size: 0.7rem !important;
+        font-size: 0.4rem !important;
         color: #a0a0a0 !important;
         background: rgba(0, 170, 255, 0.05) !important;
-        padding: 0.5rem !important;
+        padding: 0.4rem !important;
+        line-height: 1.3 !important;
     }
     
     .stAlert {
@@ -411,10 +414,23 @@ def archive_current_month(trades):
     save_trades_to_file(trades, month=current_month)
     return True
 
+def resize_image_for_ocr(image, max_width=1920):
+    """スマホスクショを適切なサイズにリサイズ"""
+    width, height = image.size
+    if width > max_width:
+        ratio = max_width / width
+        new_height = int(height * ratio)
+        image = image.resize((max_width, new_height), Image.LANCZOS)
+    return image
+
 def extract_fxgt_trade_from_image(image):
-    """FXGTのMT5スクショから取引情報を抽出"""
+    """FXGTのMT5スクショから取引情報を抽出（スマホ対応）"""
     try:
         import easyocr
+        
+        # スマホスクショ対応：リサイズ
+        image = resize_image_for_ocr(image)
+        
         reader = easyocr.Reader(['en'])
         result = reader.readtext(image)
         
@@ -499,12 +515,12 @@ def calculate_trade_statistics(trades):
     total_profit = 0
     total_loss = 0
     
-    long_wins = 0
-    long_total = 0
-    short_wins = 0
-    short_total = 0
-    
     emotion_stats = defaultdict(lambda: {'wins': 0, 'total': 0})
+    
+    # トレード日数を計算
+    trade_dates = [trade['date'] for trade in trades]
+    unique_dates = set(trade_dates)
+    total_days = len(unique_dates)
     
     for trade in trades:
         pnl = (trade['exit_price'] - trade['entry_price']) if trade['type'] == "ロング" else (trade['entry_price'] - trade['exit_price'])
@@ -516,15 +532,6 @@ def calculate_trade_statistics(trades):
             losses += 1
             total_loss += abs(pnl)
         
-        if trade['type'] == "ロング":
-            long_total += 1
-            if pnl > 0:
-                long_wins += 1
-        else:
-            short_total += 1
-            if pnl > 0:
-                short_wins += 1
-        
         emotion_stats[trade['emotion']]['total'] += 1
         if pnl > 0:
             emotion_stats[trade['emotion']]['wins'] += 1
@@ -535,8 +542,8 @@ def calculate_trade_statistics(trades):
     profit_factor = (total_profit / total_loss) if total_loss > 0 else 0
     net_profit = total_profit - total_loss
     
-    long_wr = (long_wins / long_total * 100) if long_total > 0 else 0
-    short_wr = (short_wins / short_total * 100) if short_total > 0 else 0
+    # 1日平均トレード数
+    trades_per_day = total / total_days if total_days > 0 else 0
     
     return {
         'total': total,
@@ -549,11 +556,9 @@ def calculate_trade_statistics(trades):
         'net_profit': net_profit,
         'total_profit': total_profit,
         'total_loss': total_loss,
-        'long_wr': long_wr,
-        'short_wr': short_wr,
-        'long_total': long_total,
-        'short_total': short_total,
-        'emotion_stats': dict(emotion_stats)
+        'emotion_stats': dict(emotion_stats),
+        'total_days': total_days,
+        'trades_per_day': trades_per_day
     }
 
 def generate_harsh_feedback(stats):
@@ -561,25 +566,56 @@ def generate_harsh_feedback(stats):
         return "データ不足。最低10トレードは記録してください。"
     
     feedback = "## 🔴 あなたの弱点\n\n"
+    has_weakness = False
     
-    if stats['win_rate'] < 40:
-        feedback += "- **勝率が40%未満。完全に失敗しています。** エントリータイミングが全く機能していない。根本的に見直しが必要です。\n"
-    elif stats['win_rate'] < 50:
-        feedback += "- **勝率50%未満。負け越しています。** トレード手法が間違っている可能性が高い。このまま続けると資金を失います。\n"
+    # 1. サンプル不足チェック
+    if stats['total'] < 10:
+        remaining = 10 - stats['total']
+        feedback += f"""⚠️ **データ不足**
+
+トレード記録を始めたばかりですね！現在{stats['total']}回のデータがあります。
+
+統計的に信頼できる分析を行うには、最低10回、できれば20回以上のデータが必要です。もう少しトレードを重ねると、あなたの勝ちパターンや改善点がはっきり見えてきます。
+
+焦らず、コツコツ記録を続けてください。
+
+✨ あと{remaining}回で詳細な分析が可能になります！
+🎯 目標：まずは10回の記録を目指しましょう！
+
+---
+
+"""
+        has_weakness = True
     
+    # 2. 勝率とPFのバランス評価
+    if stats['win_rate'] < 40 and stats['profit_factor'] < 1.0:
+        feedback += "- **勝率も利益率も低い状態です。** エントリータイミングと損切り・利確の両方を見直す必要があります。根本的な改善が必要です。\n"
+        has_weakness = True
+    elif stats['win_rate'] > 60 and stats['profit_factor'] < 1.5:
+        feedback += "- **勝率は高いですが、利益が小さいです。** 利確を早くしすぎています。トレンドに乗り続ける練習をしてください。小さな利益で満足せず、大きく伸ばすことを意識しましょう。\n"
+        has_weakness = True
+    elif stats['win_rate'] < 50 and stats['profit_factor'] < 1.0:
+        feedback += "- **勝率が低く、トータルで負けています。** トレード手法が間違っている可能性が高い。このまま続けると資金を失います。今すぐ見直してください。\n"
+        has_weakness = True
+    
+    # 3. 損益バランス
     if stats['avg_loss'] > stats['avg_profit']:
-        feedback += "- **損大利小になっています。** 損切りが遅すぎる、または利確が早すぎる。トレーダーとして致命的な欠陥です。\n"
+        feedback += "- **損大利小になっています。** 損切りが遅すぎる、または利確が早すぎる。トレーダーとして致命的な欠陥です。損切りは早く、利確は遅く。\n"
+        has_weakness = True
     
+    if stats['avg_loss'] > stats['avg_profit'] * 2:
+        feedback += "- **損切りが遅すぎます。** ナンピン（負けを取り戻そうとさらにポジションを持つ）していませんか？損失を先延ばしにすると、さらに傷口が広がります。\n"
+        has_weakness = True
+    
+    # 4. プロフィットファクター
     if stats['profit_factor'] < 1:
         feedback += "- **プロフィットファクター1未満。トータルで負けています。** このままでは破産確定です。今すぐトレードを止めて見直してください。\n"
+        has_weakness = True
     elif stats['profit_factor'] < 1.5:
         feedback += "- **プロフィットファクターが低すぎます。** ギリギリ勝っているだけ。安定して勝てていません。\n"
+        has_weakness = True
     
-    if stats['long_total'] > 0 and stats['short_total'] == 0:
-        feedback += "- **ロングしかトレードしていない。** 完全にバイアスがかかっています。相場は上下するもの。片方しか取れないのは未熟です。\n"
-    elif stats['short_total'] > 0 and stats['long_total'] == 0:
-        feedback += "- **ショートしかトレードしていない。** 完全にバイアスがかかっています。機会損失が大きすぎます。\n"
-    
+    # 5. 感情的トレード
     emotion_issues = []
     for emotion, data in stats['emotion_stats'].items():
         if emotion in ['焦り', '不安', '興奮'] and data['total'] > 0:
@@ -589,9 +625,15 @@ def generate_harsh_feedback(stats):
     
     if emotion_issues:
         feedback += f"- **感情的なトレードで負けています: {', '.join(emotion_issues)}。** メンタルコントロールができていない。冷静さを完全に欠いています。\n"
+        has_weakness = True
     
-    if stats['total'] < 10:
-        feedback += "- **トレード数が少なすぎます。** サンプル数が足りず、統計的に意味がありません。もっと経験を積んでください。\n"
+    # 6. オーバートレード（1日平均15回以上）
+    if stats['total_days'] >= 3 and stats['trades_per_day'] >= 15:
+        feedback += f"- **1日平均{stats['trades_per_day']:.1f}回トレードしています。オーバートレードの可能性があります。** 質より量になっていませんか？厳選したチャンスだけを狙いましょう。無理にトレードする必要はありません。\n"
+        has_weakness = True
+    
+    if not has_weakness and stats['total'] >= 10:
+        feedback = "## ✅ 現時点で大きな弱点は見つかりませんでした\n\n引き続き冷静なトレードを心がけてください。\n\n"
     
     return feedback
 
@@ -601,21 +643,19 @@ def generate_advice(stats):
     
     advice = "## 💡 改善のためのアドバイス\n\n"
     
-    if stats['win_rate'] > 50 and stats['avg_profit'] < stats['avg_loss'] * 1.5:
-        advice += "- 勝率は悪くないですが、利益が小さい。**利確を伸ばす練習をしてください。** トレンドに乗り続けることを意識しましょう。\n"
+    # 勝率は低いが利益率は良い
+    if stats['win_rate'] < 50 and stats['profit_factor'] > 1.5:
+        advice += "- 勝率は低いですが、利益率が高いです。**損小利大の理想的なトレードができています。** 方向性は間違っていません。この調子で続けてください。エントリー精度を少し上げることに集中すれば、さらに良くなります。\n"
     
-    if stats['win_rate'] < 50 and stats['profit_factor'] > 1:
-        advice += "- 勝率は低いですが利益は出ています。**方向性は間違っていません。** エントリー精度を上げることに集中してください。\n"
+    # 勝率も利益率も良い
+    if stats['win_rate'] > 60 and stats['profit_factor'] > 2.0:
+        advice += "- 勝率・利益率ともに優秀です。**現在の手法を維持してください。** 無理に変える必要はありません。\n"
     
-    if stats['long_total'] > 0 and stats['short_total'] > 0:
-        if abs(stats['long_wr'] - stats['short_wr']) > 20:
-            better = "ロング" if stats['long_wr'] > stats['short_wr'] else "ショート"
-            worse = "ショート" if better == "ロング" else "ロング"
-            advice += f"- **{better}の勝率が高い（{max(stats['long_wr'], stats['short_wr']):.0f}%）。** {worse}は控えめにして、{better}に集中する戦略も有効です。\n"
+    # 平均損失と利益のバランスが良い
+    if stats['avg_profit'] > stats['avg_loss'] * 1.5:
+        advice += "- 利益が損失の1.5倍以上あります。**損小利大が実現できています。** 素晴らしいリスク管理です。\n"
     
-    if stats['profit_factor'] > 2:
-        advice += "- プロフィットファクターが優秀です。**現在の手法を維持してください。** 無理に変える必要はありません。\n"
-    
+    # 冷静な時の勝率が高い
     for emotion, data in stats['emotion_stats'].items():
         if emotion == '冷静' and data['total'] > 0:
             wr = (data['wins'] / data['total'] * 100) if data['total'] > 0 else 0
@@ -626,7 +666,7 @@ def generate_advice(stats):
     advice += "- エントリー前に必ず損切り価格を決める\n"
     advice += "- 利確は2段階に分ける（50%ずつ）\n"
     advice += "- 連続3回負けたら必ず休憩する\n"
-    advice += "- トレード記録を毎回つける\n"
+    advice += "- トレード記録を毎回つける（継続できています！）\n"
     
     return advice
 
@@ -829,42 +869,52 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
         st.markdown(analysis)
         
+        st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown("""
-**現在価格の変動率**
-- **プラス（+）**: 前の時間帯より上昇 → 上昇トレンドの可能性が高い
-- **マイナス（-）**: 前の時間帯より下落 → 下落トレンドの可能性が高い
-""")
+            st.markdown("**現在価格の変動率** - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い")
+        st.markdown('</div>', unsafe_allow_html=True)
         
         analysis2 = f"""
 - **RSI (7)**: {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}"""
         
         st.markdown(analysis2)
         
+        st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown("""
-**RSI (7) - 相対力指数**
-- **70以上**: 買われすぎ → 売りを検討（価格が下がる可能性）
-- **30以下**: 売られすぎ → 買いを検討（価格が上がる可能性）
-- **40-60**: 中立 → トレンドに従って判断
-""")
+            st.markdown("**RSI (7)** - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断")
+        st.markdown('</div>', unsafe_allow_html=True)
         
         analysis3 = f"""
 - **MACD**: {macd_trend}"""
         
         st.markdown(analysis3)
         
+        st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown("""
-**MACD - 移動平均収束拡散**
-- **🟢 買いシグナル**: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり
-- **🔴 売りシグナル**: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり
-""")
+            st.markdown("**MACD** - 🟢 買いシグナル: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり / 🔴 売りシグナル: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり")
+        st.markdown('</div>', unsafe_allow_html=True)
         
         analysis4 = f"""
-- **ATR**: {atr:.2f}（ボラティリティ指標）
-- **ピボット**: ${pivot:,.2f}
-
+- **ATR**: {atr:.2f}（ボラティリティ指標）"""
+        
+        st.markdown(analysis4)
+        
+        st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
+        with st.expander("ℹ️ 用語解説", expanded=False):
+            st.markdown("**ATR（ボラティリティ指標）** - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        analysis5 = f"""
+- **ピボット**: ${pivot:,.2f}"""
+        
+        st.markdown(analysis5)
+        
+        st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
+        with st.expander("ℹ️ 用語解説", expanded=False):
+            st.markdown("**ピボットポイント** - 前日の高値・安値・終値から計算される基準価格。トレーダーが注目するポイント / S1（サポート1）: 第1サポートライン（下値支持） / R1（レジスタンス1）: 第1レジスタンスライン（上値抵抗）")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        analysis6 = f"""
 ### 🎯 高精度エントリー戦略
 
 #### 🟢 ロングの場合
@@ -907,7 +957,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - **ATRが平均の1.5倍以上の時は見送り**
 <small class="note-text">→ 通常ATRが10-15の場合、22以上なら見送り。ボラティリティが高すぎて損切りに引っかかりやすい</small>
 """
-        st.markdown(analysis4, unsafe_allow_html=True)
+        st.markdown(analysis6, unsafe_allow_html=True)
     
     elif style == "デイトレード":
         analysis = f"""
@@ -915,18 +965,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 
 ### 📈 市場環境分析
 
-- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)"""
-        
-        st.markdown(analysis)
-        
-        with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown("""
-**現在価格の変動率について**
-- **プラス（+）**: 前の時間帯より上昇 → 上昇トレンドの可能性
-- **マイナス（-）**: 前の時間帯より下落 → 下落トレンドの可能性
-""")
-        
-        analysis2 = f"""
+- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
 - **RSI (7)**: {rsi:.1f}
 - **MACD**: {macd_trend}
 - **ATR**: {atr:.2f}
@@ -936,18 +975,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 
 ### トレンド判定
 {"📈 **強い上昇トレンド** - ロング優勢" if change_pct > 0.5 and macd > macd_signal else "📉 **強い下落トレンド** - ショート優勢" if change_pct < -0.5 and macd < macd_signal else "➡️ **レンジ相場** - ブレイクアウト待ち"}
-"""
-        st.markdown(analysis2)
-        
-        with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown("""
-**トレンド判定について**
-- **強い上昇トレンド**: 価格が継続的に上がっている → ロング（買い）が有利
-- **強い下落トレンド**: 価格が継続的に下がっている → ショート（売り）が有利
-- **レンジ相場**: 価格が一定範囲内で上下 → ブレイクアウト（範囲を抜ける瞬間）を待つ
-""")
-        
-        analysis3 = f"""
+
 ### 🎯 精密トレード戦略
 
 #### 🟢 ロングの場合
@@ -990,7 +1018,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - ATRが{atr:.2f}なので、{"ボラティリティ高め、損切り幅を拡大" if atr > 15 else "ボラティリティ通常、標準的戦略で"}
 - ポジションは必ず当日中に決済
 """
-        st.markdown(analysis3)
+        st.markdown(analysis)
     
     else:
         analysis = f"""
@@ -1215,16 +1243,16 @@ try:
 💡 **画像アップロードのヒント**
 
 **最も精度が高い画像：**
-- FXGT MT5のトレード詳細画面
-- スクリーンショット（Win + Shift + S / Cmd + Shift + 4）
-- PNG形式、解像度1920x1080以上推奨
+- FXGT MT5のトレード詳細画面（スマホスクショOK！）
+- スクリーンショット（スマホ：音量下+電源ボタン / PC：Win + Shift + S / Cmd + Shift + 4）
+- PNG形式推奨
 
 **精度を上げるコツ：**
 ✅ MT5のトレード詳細画面だけを切り取る
 ✅ 文字が鮮明に見える明るさ
 ✅ エントリー価格 → 決済価格の形式
-❌ スマホで画面を撮影した写真
-❌ 低解像度・ボケた画像
+❌ 画面が暗い、ボケている
+❌ 複数のウィンドウが重なっている
 
 **読み取れる情報：**
 - トレードタイプ（buy → ロング、sell → ショート）
@@ -1233,34 +1261,38 @@ try:
 - エントリー・決済の日時（MT5表示時刻そのまま）
 """)
         
-        uploaded_file = st.file_uploader("画像をアップロード", type=['png', 'jpg', 'jpeg'], key="ocr_upload")
+        uploaded_file = st.file_uploader("画像をアップロード（最大10MB）", type=['png', 'jpg', 'jpeg'], key="ocr_upload")
         
         if uploaded_file is not None:
-            image = Image.open(uploaded_file)
-            
-            col_img, col_result = st.columns([1, 1])
-            
-            with col_img:
-                st.image(image, caption="アップロードされた画像", use_container_width=True)
-            
-            with col_result:
-                if st.button("🔍 画像から情報を抽出"):
-                    with st.spinner("画像を解析中..."):
-                        ocr_result = extract_fxgt_trade_from_image(image)
-                        st.session_state.ocr_data = ocr_result
-                        
-                        if ocr_result['entry_price'] > 0:
-                            st.success("✅ 抽出完了！")
-                            st.markdown(f"**トレードタイプ**: {ocr_result['type']}")
-                            st.markdown(f"**ロット**: {ocr_result['lot']}")
-                            st.markdown(f"**エントリー**: ${ocr_result['entry_price']:,.2f}")
-                            st.markdown(f"**決済**: ${ocr_result['exit_price']:,.2f}")
-                            st.markdown(f"**エントリー日時**: {ocr_result['entry_date']} {ocr_result['entry_time']}")
-                            st.markdown(f"**決済日時**: {ocr_result['exit_date']} {ocr_result['exit_time']}")
-                        else:
-                            st.warning("⚠️ 価格情報を抽出できませんでした。手動で入力してください。")
-                            with st.expander("デバッグ情報", expanded=False):
-                                st.text(ocr_result['raw_text'])
+            # ファイルサイズチェック
+            if uploaded_file.size > 10 * 1024 * 1024:
+                st.error("❌ ファイルサイズが10MBを超えています。画像を圧縮してください。")
+            else:
+                image = Image.open(uploaded_file)
+                
+                col_img, col_result = st.columns([1, 1])
+                
+                with col_img:
+                    st.image(image, caption="アップロードされた画像", use_container_width=True)
+                
+                with col_result:
+                    if st.button("🔍 画像から情報を抽出"):
+                        with st.spinner("画像を解析中..."):
+                            ocr_result = extract_fxgt_trade_from_image(image)
+                            st.session_state.ocr_data = ocr_result
+                            
+                            if ocr_result['entry_price'] > 0:
+                                st.success("✅ 抽出完了！")
+                                st.markdown(f"**トレードタイプ**: {ocr_result['type']}")
+                                st.markdown(f"**ロット**: {ocr_result['lot']}")
+                                st.markdown(f"**エントリー**: ${ocr_result['entry_price']:,.2f}")
+                                st.markdown(f"**決済**: ${ocr_result['exit_price']:,.2f}")
+                                st.markdown(f"**エントリー日時**: {ocr_result['entry_date']} {ocr_result['entry_time']}")
+                                st.markdown(f"**決済日時**: {ocr_result['exit_date']} {ocr_result['exit_time']}")
+                            else:
+                                st.warning("⚠️ 価格情報を抽出できませんでした。手動で入力してください。")
+                                with st.expander("デバッグ情報", expanded=False):
+                                    st.text(ocr_result['raw_text'])
         
         if st.session_state.ocr_data is not None:
             st.markdown("---")
@@ -1277,10 +1309,10 @@ try:
                                               key="ocr_type")
                 
                 ocr_entry = st.number_input("エントリー価格", 
-                                            value=float(st.session_state.ocr_data['entry_price']), 
+                                            value=float(st.session_state.ocr_data['entry_price']) if st.session_state.ocr_data['entry_price'] > 0 else 5000.0, 
                                             format="%.2f", key="ocr_entry")
                 ocr_exit = st.number_input("決済価格", 
-                                          value=float(st.session_state.ocr_data['exit_price']), 
+                                          value=float(st.session_state.ocr_data['exit_price']) if st.session_state.ocr_data['exit_price'] > 0 else 5050.0, 
                                           format="%.2f", key="ocr_exit")
             
             with ocr_col2:
@@ -1394,6 +1426,25 @@ try:
                     st.metric("総トレード", stats['total'])
                 
                 st.markdown(generate_harsh_feedback(stats))
+                
+                # PF用語解説
+                st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
+                with st.expander("ℹ️ プロフィットファクター（PF）とは", expanded=False):
+                    st.markdown("""
+**プロフィットファクター（PF）の見方**
+
+総利益 ÷ 総損失 で計算される指標
+
+- **1.0未満**: トータルで負けている
+- **1.0〜1.5**: ギリギリ勝っている
+- **1.5〜2.0**: 良好
+- **2.0以上**: 優秀
+- **3.0以上**: プロレベル
+
+**例：** 総利益 $300、総損失 $150 → PF = 300 ÷ 150 = 2.0（良好）
+""")
+                st.markdown('</div>', unsafe_allow_html=True)
+                
                 st.markdown(generate_advice(stats))
         else:
             st.info("統計分析にはトレードデータが必要です")
