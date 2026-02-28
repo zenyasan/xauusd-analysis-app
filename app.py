@@ -428,38 +428,65 @@ def resize_image_for_ocr(image, max_width=1920):
     return image
 
 def extract_fxgt_trade_from_image(image):
-    """FXGTのMT5スクショから取引情報を抽出（スマホ対応）"""
+    """FXGTのMT5スクショから取引情報を抽出（スマホ対応・改善版）"""
     try:
         import easyocr
+        import cv2
+        import numpy as np
+        
+        # PILをnumpy配列に変換
+        image_np = np.array(image)
         
         # スマホスクショ対応：リサイズ
-        image = resize_image_for_ocr(image)
+        if image_np.shape[1] > 1920:
+            ratio = 1920 / image_np.shape[1]
+            new_width = 1920
+            new_height = int(image_np.shape[0] * ratio)
+            image_np = cv2.resize(image_np, (new_width, new_height), interpolation=cv2.INTER_LANCZOS4)
         
-        reader = easyocr.Reader(['en'])
-        result = reader.readtext(image)
+        # グレースケール変換
+        if len(image_np.shape) == 3:
+            gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = image_np
         
-        full_text = " ".join([text[1] for text in result])
+        # コントラスト強調
+        gray = cv2.convertScaleAbs(gray, alpha=1.5, beta=30)
+        
+        # ノイズ除去
+        gray = cv2.fastNlMeansDenoising(gray, None, 10, 7, 21)
+        
+        reader = easyocr.Reader(['en'], gpu=False)
+        result = reader.readtext(gray, detail=0)
+        
+        full_text = " ".join(result)
         
         # タイプ（buy/sell）
-        trade_type = "ロング" if "buy" in full_text.lower() else "ショート"
+        trade_type = "ロング" if "buy" in full_text.lower() else "ショート" if "sell" in full_text.lower() else "ロング"
         
-        # ロット数
-        lot_pattern = r'(?:buy|sell)\s+([\d.]+)'
+        # ロット数（より柔軟なパターン）
+        lot_pattern = r'(?:buy|sell)\s*(\d+\.?\d*)'
         lot_match = re.search(lot_pattern, full_text, re.IGNORECASE)
         lot = float(lot_match.group(1)) if lot_match else 0.01
         
-        # エントリー価格 → 決済価格（修正済み）
-        price_pattern = r'([\d,]+\.[\d]+)\s*(?:→|->)\s*([\d,]+\.[\d]+)'
+        # エントリー価格 → 決済価格（スペースありの矢印にも対応）
+        price_pattern = r'(\d{4,5}\.?\d*)\s*(?:→|-\s*>|->)\s*(\d{4,5}\.?\d*)'
         price_match = re.search(price_pattern, full_text)
         if price_match:
-            entry_price = float(price_match.group(1).replace(',', ''))
-            exit_price = float(price_match.group(2).replace(',', ''))
+            entry_price = float(price_match.group(1).replace(',', '').replace(' ', ''))
+            exit_price = float(price_match.group(2).replace(',', '').replace(' ', ''))
         else:
-            entry_price = 0
-            exit_price = 0
+            # 単純に5桁の数字を2つ探す
+            numbers = re.findall(r'\b\d{4,5}\.?\d{0,2}\b', full_text)
+            if len(numbers) >= 2:
+                entry_price = float(numbers[0])
+                exit_price = float(numbers[1])
+            else:
+                entry_price = 0
+                exit_price = 0
         
-        # 日時（修正済み）
-        time_pattern = r'(\d{4})[./](\d{2})[./](\d{2})\s+(\d{2}):(\d{2}):(\d{2})\s*(?:→|->)\s*(\d{4})[./](\d{2})[./](\d{2})\s+(\d{2}):(\d{2}):(\d{2})'
+        # 日時（より柔軟なパターン）
+        time_pattern = r'(\d{4})[./\s]?(\d{2})[./\s]?(\d{2})\s+(\d{2})[.:](\d{2})[.:](\d{2})\s*(?:→|-\s*>|->)?\s*(\d{4})[./\s]?(\d{2})[./\s]?(\d{2})\s+(\d{2})[.:](\d{2})[.:](\d{2})'
         time_match = re.search(time_pattern, full_text)
         if time_match:
             entry_date = f"{time_match.group(1)}-{time_match.group(2)}-{time_match.group(3)}"
@@ -496,7 +523,6 @@ def extract_fxgt_trade_from_image(image):
             'raw_text': 'OCRライブラリが利用できません。手動で入力してください。'
         }
     except Exception as e:
-        st.error(f"OCRエラー: {e}")
         return {
             'type': 'ロング',
             'lot': 0.01,
