@@ -235,7 +235,7 @@ st.markdown("""
         box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
     }
 .explanation-expander {
-        margin-top: -0.8rem !important;
+        margin-top: -1.2rem !important;
    }
     
     .explanation-expander .streamlit-expanderHeader {
