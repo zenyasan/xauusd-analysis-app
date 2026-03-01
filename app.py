@@ -1242,6 +1242,8 @@ try:
     fig.update_xaxes(
         tickformat='%m/%d<br>%H:%M'
     )
+
+    st.markdown("<br>" * 5, unsafe_allow_html=True)
     
     st.plotly_chart(fig, use_container_width=True)
     
