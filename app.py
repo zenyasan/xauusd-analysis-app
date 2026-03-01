@@ -81,7 +81,7 @@ st.markdown("""
             font-size: 0.5rem;
         }
         .main .block-container {
-            padding-top: 24rem;
+            padding-top: 30rem;
         }
     }
     
