@@ -841,9 +841,8 @@ trade_style = st.sidebar.radio("トレードスタイル", ["スキャルピン�
 
 st.sidebar.markdown("---")
 st.sidebar.header("🔄 自動更新設定")
-auto_refresh = st.sidebar.checkbox("自動更新を有効化", value=False)
-if auto_refresh:
-    refresh_interval = st.sidebar.slider("更新間隔（秒）", 30, 300, 60)
+auto_refresh = st.sidebar.checkbox("自動更新を有効化（30秒間隔）", value=False)
+refresh_interval = 30  # 30秒固定
 
 st.sidebar.markdown("---")
 st.sidebar.header("📝 マイトレードルール")
