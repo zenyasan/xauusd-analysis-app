@@ -508,36 +508,66 @@ def extract_fxgt_trade_from_image(image):
                 entry_price = float(prices[0])
                 exit_price = float(prices[1])
         
-        # 日時（改善版：ピリオド区切りに対応）
+        # 日時（大幅改善版：複数パターンに対応）
         entry_date = datetime.now().strftime('%Y-%m-%d')
         entry_time = "00:00:00"
         exit_date = entry_date
         exit_time = "00:00:00"
-        
-        # パターン1: "2026.02.27 18:08:32" のような形式
-        time_pattern1 = r'(\d{4})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2}):(\d{2})\s*(?:→|-\s*>|->)?\s*(\d{4})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2}):(\d{2})'
-        time_match1 = re.search(time_pattern1, full_text)
-        if time_match1:
-            entry_date = f"{time_match1.group(1)}-{time_match1.group(2)}-{time_match1.group(3)}"
-            entry_time = f"{time_match1.group(4)}:{time_match1.group(5)}:{time_match1.group(6)}"
-            exit_date = f"{time_match1.group(7)}-{time_match1.group(8)}-{time_match1.group(9)}"
-            exit_time = f"{time_match1.group(10)}:{time_match1.group(11)}:{time_match1.group(12)}"
-        else:
-            # パターン2: 日付と時刻を別々に探す
-            date_pattern = r'(\d{4})[\./](\d{2})[\./](\d{2})'
-            time_pattern = r'(\d{2}):(\d{2}):(\d{2})'
-            
-            dates = re.findall(date_pattern, full_text)
-            times = re.findall(time_pattern, full_text)
-            
-            if len(dates) >= 2 and len(times) >= 2:
-                entry_date = f"{dates[0][0]}-{dates[0][1]}-{dates[0][2]}"
-                entry_time = f"{times[0][0]}:{times[0][1]}:{times[0][2]}"
-                exit_date = f"{dates[1][0]}-{dates[1][1]}-{dates[1][2]}"
-                exit_time = f"{times[1][0]}:{times[1][1]}:{times[1][2]}"
-            elif len(dates) >= 1 and len(times) >= 1:
-                entry_date = f"{dates[0][0]}-{dates[0][1]}-{dates[0][2]}"
-                entry_time = f"{times[0][0]}:{times[0][1]}:{times[0][2]}"
+
+        # まず全ての日付と時刻を抽出
+        all_dates = []
+        all_times = []
+
+        # 日付パターン（ピリオド、スラッシュ、ハイフン対応）
+        date_patterns = [
+            r'(\d{4})\.(\d{2})\.(\d{2})',  # 2026.02.27
+            r'(\d{4})/(\d{2})/(\d{2})',    # 2026/02/27
+            r'(\d{4})-(\d{2})-(\d{2})'     # 2026-02-27
+        ]
+
+        for pattern in date_patterns:
+            matches = re.findall(pattern, full_text)
+            for match in matches:
+                all_dates.append(f"{match[0]}-{match[1]}-{match[2]}")
+
+        # 時刻パターン（コロン、ピリオド対応）
+        time_patterns = [
+            r'(\d{2}):(\d{2}):(\d{2})',    # 18:08:32
+            r'(\d{2})\.(\d{2})\.(\d{2})',  # 18.08.32
+            r'(\d{2}):(\d{2})'             # 18:08 (秒なし)
+        ]
+
+        for pattern in time_patterns:
+            matches = re.findall(pattern, full_text)
+            for match in matches:
+                if len(match) == 3:
+                    all_times.append(f"{match[0]}:{match[1]}:{match[2]}")
+                else:
+                    all_times.append(f"{match[0]}:{match[1]}:00")
+
+        # 重複削除
+        all_dates = list(dict.fromkeys(all_dates))
+        all_times = list(dict.fromkeys(all_times))
+
+        # デバッグ出力
+        print(f"抽出された日付: {all_dates}")
+        print(f"抽出された時刻: {all_times}")
+
+        # 日付と時刻を組み合わせ
+        if len(all_dates) >= 2 and len(all_times) >= 2:
+            entry_date = all_dates[0]
+            entry_time = all_times[0]
+            exit_date = all_dates[1]
+            exit_time = all_times[1]
+        elif len(all_dates) >= 1 and len(all_times) >= 2:
+            # 日付が1つしかない場合、同日の取引と仮定
+            entry_date = all_dates[0]
+            exit_date = all_dates[0]
+            entry_time = all_times[0]
+            exit_time = all_times[1]
+        elif len(all_dates) >= 1 and len(all_times) >= 1:
+            entry_date = all_dates[0]
+            entry_time = all_times[0]
         
         return {
             'type': trade_type,
