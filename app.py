@@ -428,7 +428,7 @@ def resize_image_for_ocr(image, max_width=1920):
     return image
 
 def extract_fxgt_trade_from_image(image):
-    """FXGTのMT5スクショから取引情報を抽出（スマホ対応・改善版）"""
+    """FXGTのMT5スクショから取引情報を抽出（精度改善版）"""
     try:
         import easyocr
         import cv2
@@ -461,43 +461,83 @@ def extract_fxgt_trade_from_image(image):
         
         full_text = " ".join(result)
         
+        # デバッグ用：抽出されたテキストを表示
+        print(f"OCR抽出テキスト: {full_text}")
+        
         # タイプ（buy/sell）
         trade_type = "ロング" if "buy" in full_text.lower() else "ショート" if "sell" in full_text.lower() else "ロング"
         
-        # ロット数（より柔軟なパターン）
-        lot_pattern = r'(?:buy|sell)\s*(\d+\.?\d*)'
-        lot_match = re.search(lot_pattern, full_text, re.IGNORECASE)
-        lot = float(lot_match.group(1)) if lot_match else 0.01
-        
-        # エントリー価格 → 決済価格（スペースありの矢印にも対応）
-        price_pattern = r'(\d{4,5}\.?\d*)\s*(?:→|-\s*>|->)\s*(\d{4,5}\.?\d*)'
-        price_match = re.search(price_pattern, full_text)
-        if price_match:
-            entry_price = float(price_match.group(1).replace(',', '').replace(' ', ''))
-            exit_price = float(price_match.group(2).replace(',', '').replace(' ', ''))
+        # ロット数（改善版：buyまたはsellの直後の数値）
+        lot = 0.01  # デフォルト値
+        # パターン1: "buy 0.03" のような形式
+        lot_pattern1 = r'(?:buy|sell)\s+(\d+\.?\d*)'
+        lot_match1 = re.search(lot_pattern1, full_text, re.IGNORECASE)
+        if lot_match1:
+            lot = float(lot_match1.group(1))
         else:
-            # 単純に5桁の数字を2つ探す
-            numbers = re.findall(r'\b\d{4,5}\.?\d{0,2}\b', full_text)
-            if len(numbers) >= 2:
-                entry_price = float(numbers[0])
-                exit_price = float(numbers[1])
+            # パターン2: "buy0.03" のような形式（スペースなし）
+            lot_pattern2 = r'(?:buy|sell)(\d+\.?\d*)'
+            lot_match2 = re.search(lot_pattern2, full_text, re.IGNORECASE)
+            if lot_match2:
+                lot = float(lot_match2.group(1))
             else:
-                entry_price = 0
-                exit_price = 0
+                # パターン3: 0.01〜10.0の範囲の小数を探す
+                lot_pattern3 = r'\b(\d\.\d{1,2})\b'
+                lot_match3 = re.search(lot_pattern3, full_text)
+                if lot_match3:
+                    potential_lot = float(lot_match3.group(1))
+                    if 0.01 <= potential_lot <= 10.0:
+                        lot = potential_lot
         
-        # 日時（より柔軟なパターン）
-        time_pattern = r'(\d{4})[./\s]?(\d{2})[./\s]?(\d{2})\s+(\d{2})[.:](\d{2})[.:](\d{2})\s*(?:→|-\s*>|->)?\s*(\d{4})[./\s]?(\d{2})[./\s]?(\d{2})\s+(\d{2})[.:](\d{2})[.:](\d{2})'
-        time_match = re.search(time_pattern, full_text)
-        if time_match:
-            entry_date = f"{time_match.group(1)}-{time_match.group(2)}-{time_match.group(3)}"
-            entry_time = f"{time_match.group(4)}:{time_match.group(5)}:{time_match.group(6)}"
-            exit_date = f"{time_match.group(7)}-{time_match.group(8)}-{time_match.group(9)}"
-            exit_time = f"{time_match.group(10)}:{time_match.group(11)}:{time_match.group(12)}"
+        # エントリー価格 → 決済価格（改善版）
+        entry_price = 0
+        exit_price = 0
+        
+        # パターン1: "5235.14 → 5261.64" の形式
+        price_pattern1 = r'(\d{4,5}\.\d{1,2})\s*(?:→|-\s*>|->)\s*(\d{4,5}\.\d{1,2})'
+        price_match1 = re.search(price_pattern1, full_text)
+        if price_match1:
+            entry_price = float(price_match1.group(1))
+            exit_price = float(price_match1.group(2))
         else:
-            entry_date = datetime.now().strftime('%Y-%m-%d')
-            entry_time = "00:00:00"
-            exit_date = entry_date
-            exit_time = "00:00:00"
+            # パターン2: 4桁または5桁の数値を2つ探す
+            price_pattern2 = r'\b(\d{4,5}\.\d{1,2})\b'
+            prices = re.findall(price_pattern2, full_text)
+            if len(prices) >= 2:
+                # 最初の2つを採用
+                entry_price = float(prices[0])
+                exit_price = float(prices[1])
+        
+        # 日時（改善版：ピリオド区切りに対応）
+        entry_date = datetime.now().strftime('%Y-%m-%d')
+        entry_time = "00:00:00"
+        exit_date = entry_date
+        exit_time = "00:00:00"
+        
+        # パターン1: "2026.02.27 18:08:32" のような形式
+        time_pattern1 = r'(\d{4})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2}):(\d{2})\s*(?:→|-\s*>|->)?\s*(\d{4})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2}):(\d{2})'
+        time_match1 = re.search(time_pattern1, full_text)
+        if time_match1:
+            entry_date = f"{time_match1.group(1)}-{time_match1.group(2)}-{time_match1.group(3)}"
+            entry_time = f"{time_match1.group(4)}:{time_match1.group(5)}:{time_match1.group(6)}"
+            exit_date = f"{time_match1.group(7)}-{time_match1.group(8)}-{time_match1.group(9)}"
+            exit_time = f"{time_match1.group(10)}:{time_match1.group(11)}:{time_match1.group(12)}"
+        else:
+            # パターン2: 日付と時刻を別々に探す
+            date_pattern = r'(\d{4})[\./](\d{2})[\./](\d{2})'
+            time_pattern = r'(\d{2}):(\d{2}):(\d{2})'
+            
+            dates = re.findall(date_pattern, full_text)
+            times = re.findall(time_pattern, full_text)
+            
+            if len(dates) >= 2 and len(times) >= 2:
+                entry_date = f"{dates[0][0]}-{dates[0][1]}-{dates[0][2]}"
+                entry_time = f"{times[0][0]}:{times[0][1]}:{times[0][2]}"
+                exit_date = f"{dates[1][0]}-{dates[1][1]}-{dates[1][2]}"
+                exit_time = f"{times[1][0]}:{times[1][1]}:{times[1][2]}"
+            elif len(dates) >= 1 and len(times) >= 1:
+                entry_date = f"{dates[0][0]}-{dates[0][1]}-{dates[0][2]}"
+                entry_time = f"{times[0][0]}:{times[0][1]}:{times[0][2]}"
         
         return {
             'type': trade_type,
