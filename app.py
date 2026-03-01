@@ -428,7 +428,7 @@ def resize_image_for_ocr(image, max_width=1920):
     return image
 
 def extract_fxgt_trade_from_image(image):
-    """FXGTのMT5スクショから取引情報を抽出（精度改善版）"""
+    """FXGTのMT5スクショから取引情報を抽出（位置情報ソート版）"""
     try:
         import easyocr
         import cv2
@@ -456,166 +456,136 @@ def extract_fxgt_trade_from_image(image):
         # ノイズ除去
         gray = cv2.fastNlMeansDenoising(gray, None, 10, 7, 21)
         
+        # detail=1 で位置情報も取得
         reader = easyocr.Reader(['en'], gpu=False)
-        result = reader.readtext(gray, detail=0)
+        result = reader.readtext(gray, detail=1)
         
-        full_text = " ".join(result)
+        # 位置情報付きでY座標（縦位置）でソート（上から下へ）
+        result_sorted = sorted(result, key=lambda x: x[0][0][1])  # Y座標でソート
         
-        # デバッグ用：抽出されたテキストを表示
-        print(f"OCR抽出テキスト: {full_text}")
+        # テキストのみ抽出
+        texts_sorted = [item[1] for item in result_sorted]
+        full_text = " ".join(texts_sorted)
+        
+        print(f"=== OCR読み取り結果（位置順） ===")
+        for i, item in enumerate(result_sorted):
+            bbox, text, conf = item
+            y_pos = bbox[0][1]
+            print(f"{i+1}. Y座標:{y_pos:.0f} - {text}")
+        print(f"============================")
         
         # タイプ（buy/sell）
         trade_type = "ロング" if "buy" in full_text.lower() else "ショート" if "sell" in full_text.lower() else "ロング"
         
-        # ロット数（改善版：buyまたはsellの直後の数値）
-        lot = 0.01  # デフォルト値
-        # パターン1: "buy 0.03" のような形式
+        # ロット数
+        lot = 0.01
         lot_pattern1 = r'(?:buy|sell)\s+(\d+\.?\d*)'
         lot_match1 = re.search(lot_pattern1, full_text, re.IGNORECASE)
         if lot_match1:
             lot = float(lot_match1.group(1))
         else:
-            # パターン2: "buy0.03" のような形式（スペースなし）
             lot_pattern2 = r'(?:buy|sell)(\d+\.?\d*)'
             lot_match2 = re.search(lot_pattern2, full_text, re.IGNORECASE)
             if lot_match2:
                 lot = float(lot_match2.group(1))
-            else:
-                # パターン3: 0.01〜10.0の範囲の小数を探す
-                lot_pattern3 = r'\b(\d\.\d{1,2})\b'
-                lot_match3 = re.search(lot_pattern3, full_text)
-                if lot_match3:
-                    potential_lot = float(lot_match3.group(1))
-                    if 0.01 <= potential_lot <= 10.0:
-                        lot = potential_lot
         
-        # エントリー価格 → 決済価格（改善版）
+        # エントリー価格 → 決済価格
         entry_price = 0
         exit_price = 0
-        
-        # パターン1: "5235.14 → 5261.64" の形式
-        price_pattern1 = r'(\d{4,5}\.\d{1,2})\s*(?:→|-\s*>|->)\s*(\d{4,5}\.\d{1,2})'
-        price_match1 = re.search(price_pattern1, full_text)
-        if price_match1:
-            entry_price = float(price_match1.group(1))
-            exit_price = float(price_match1.group(2))
+        price_pattern = r'(\d{4,5}\.\d{1,2})\s*(?:→|-\s*>|->)\s*(\d{4,5}\.\d{1,2})'
+        price_match = re.search(price_pattern, full_text)
+        if price_match:
+            entry_price = float(price_match.group(1))
+            exit_price = float(price_match.group(2))
         else:
-            # パターン2: 4桁または5桁の数値を2つ探す
             price_pattern2 = r'\b(\d{4,5}\.\d{1,2})\b'
             prices = re.findall(price_pattern2, full_text)
             if len(prices) >= 2:
-                # 最初の2つを採用
                 entry_price = float(prices[0])
                 exit_price = float(prices[1])
         
-        # 日時（最終版：厳密なバリデーション付き）
+        # 日時抽出（位置順で処理）
         entry_date = datetime.now().strftime('%Y-%m-%d')
         entry_time = "00:00:00"
         exit_date = entry_date
         exit_time = "00:00:00"
         
-        # OCRが読み取った全テキストを表示（デバッグ用）
-        print(f"=== OCR読み取りテキスト ===")
-        print(full_text)
-        print(f"========================")
-        
-        # ステップ1: 完全な日時を抽出（日付+時刻のセット）
+        # 完全な日時パターン
         datetime_pattern = r'(\d{4})[.\-/](\d{2})[.\-/](\d{2})\s+(\d{2})[:\.](\d{2})[:\.](\d{2})'
-        datetime_matches = re.findall(datetime_pattern, full_text)
         
-        # バリデーション：時刻が有効範囲内か確認
+        # 位置順で日時を抽出
         valid_datetimes = []
-        for match in datetime_matches:
-            year, month, day, hour, minute, second = match
-            # 時刻の範囲チェック
-            if 0 <= int(hour) <= 23 and 0 <= int(minute) <= 59 and 0 <= int(second) <= 59:
-                # 日付の範囲チェック
-                if 1 <= int(month) <= 12 and 1 <= int(day) <= 31:
-                    valid_datetimes.append(match)
-                    print(f"✅ 有効な日時: {year}-{month}-{day} {hour}:{minute}:{second}")
-            else:
-                print(f"❌ 無効な日時（範囲外）: {year}-{month}-{day} {hour}:{minute}:{second}")
+        for i, item in enumerate(result_sorted):
+            text = item[1]
+            y_pos = item[0][0][1]
+            
+            # このテキストに日時が含まれているか確認
+            match = re.search(datetime_pattern, text)
+            if match:
+                year, month, day, hour, minute, second = match.groups()
+                # バリデーション
+                if (0 <= int(hour) <= 23 and 0 <= int(minute) <= 59 and 
+                    0 <= int(second) <= 59 and 1 <= int(month) <= 12 and 
+                    1 <= int(day) <= 31):
+                    dt = {
+                        'date': f"{year}-{month}-{day}",
+                        'time': f"{hour}:{minute}:{second}",
+                        'y_pos': y_pos,
+                        'text': text
+                    }
+                    valid_datetimes.append(dt)
+                    print(f"✅ 有効な日時検出: Y={y_pos:.0f}, {dt['date']} {dt['time']}")
         
+        # 位置順（Y座標順）で最初の2つを使用
         if len(valid_datetimes) >= 2:
-            # 2つ以上の有効な日時が見つかった場合
-            entry_date = f"{valid_datetimes[0][0]}-{valid_datetimes[0][1]}-{valid_datetimes[0][2]}"
-            entry_time = f"{valid_datetimes[0][3]}:{valid_datetimes[0][4]}:{valid_datetimes[0][5]}"
-            exit_date = f"{valid_datetimes[1][0]}-{valid_datetimes[1][1]}-{valid_datetimes[1][2]}"
-            exit_time = f"{valid_datetimes[1][3]}:{valid_datetimes[1][4]}:{valid_datetimes[1][5]}"
-            print(f"✅ 抽出成功: エントリー={entry_date} {entry_time}, 決済={exit_date} {exit_time}")
-        
+            entry_date = valid_datetimes[0]['date']
+            entry_time = valid_datetimes[0]['time']
+            exit_date = valid_datetimes[1]['date']
+            exit_time = valid_datetimes[1]['time']
+            print(f"✅ 抽出成功（位置順）:")
+            print(f"   エントリー: {entry_date} {entry_time} (Y={valid_datetimes[0]['y_pos']:.0f})")
+            print(f"   決済: {exit_date} {exit_time} (Y={valid_datetimes[1]['y_pos']:.0f})")
+            
         elif len(valid_datetimes) == 1:
-            # 1つしか見つからない場合、個別に探す
-            entry_date = f"{valid_datetimes[0][0]}-{valid_datetimes[0][1]}-{valid_datetimes[0][2]}"
-            entry_time = f"{valid_datetimes[0][3]}:{valid_datetimes[0][4]}:{valid_datetimes[0][5]}"
-            print(f"⚠️ エントリーのみ抽出: {entry_date} {entry_time}")
-            
-            # 日付と時刻を別々に探す（フォールバック）
-            all_dates = []
-            all_times = []
-            
-            # 全ての日付を抽出
-            date_pattern = r'(\d{4})[.\-/](\d{2})[.\-/](\d{2})'
-            date_matches = re.findall(date_pattern, full_text)
-            for match in date_matches:
-                if 1 <= int(match[1]) <= 12 and 1 <= int(match[2]) <= 31:
-                    all_dates.append(f"{match[0]}-{match[1]}-{match[2]}")
-            
-            # 全ての時刻を抽出
-            time_pattern = r'\b(\d{2})[:\.](\d{2})[:\.](\d{2})\b'
-            time_matches = re.findall(time_pattern, full_text)
-            for match in time_matches:
-                if 0 <= int(match[0]) <= 23 and 0 <= int(match[1]) <= 59 and 0 <= int(match[2]) <= 59:
-                    all_times.append(f"{match[0]}:{match[1]}:{match[2]}")
-            
-            print(f"フォールバック: 日付{len(all_dates)}個、時刻{len(all_times)}個")
-            print(f"日付リスト: {all_dates}")
-            print(f"時刻リスト: {all_times}")
-            
-            # 決済日時を設定
-            if len(all_dates) >= 2:
-                exit_date = all_dates[1]
-            if len(all_times) >= 2:
-                exit_time = all_times[1]
-            
-            print(f"フォールバック後: 決済={exit_date} {exit_time}")
-        
+            entry_date = valid_datetimes[0]['date']
+            entry_time = valid_datetimes[0]['time']
+            print(f"⚠️ エントリーのみ検出: {entry_date} {entry_time}")
         else:
-            # 有効な日時が1つも見つからない場合
-            print("❌ 有効な日時が見つかりません。日付と時刻を個別に抽出します...")
-            
-            # 日付を抽出
+            print("❌ 完全な日時が検出できませんでした")
+            # フォールバック処理
             date_pattern = r'(\d{4})[.\-/](\d{2})[.\-/](\d{2})'
-            date_matches = re.findall(date_pattern, full_text)
-            valid_dates = []
-            for match in date_matches:
-                if 1 <= int(match[1]) <= 12 and 1 <= int(match[2]) <= 31:
-                    valid_dates.append(f"{match[0]}-{match[1]}-{match[2]}")
-            
-            # 時刻を抽出（より厳密に）
             time_pattern = r'\b(\d{2})[:\.](\d{2})[:\.](\d{2})\b'
-            time_matches = re.findall(time_pattern, full_text)
-            valid_times = []
-            for match in time_matches:
-                hour, minute, second = int(match[0]), int(match[1]), int(match[2])
-                if 0 <= hour <= 23 and 0 <= minute <= 59 and 0 <= second <= 59:
-                    valid_times.append(f"{match[0]}:{match[1]}:{match[2]}")
             
-            print(f"個別抽出: 有効な日付{len(valid_dates)}個、有効な時刻{len(valid_times)}個")
-            print(f"有効な日付: {valid_dates}")
-            print(f"有効な時刻: {valid_times}")
+            dates = []
+            times = []
             
-            if len(valid_dates) >= 1:
-                entry_date = valid_dates[0]
-                if len(valid_dates) >= 2:
-                    exit_date = valid_dates[1]
+            for item in result_sorted:
+                text = item[1]
+                y_pos = item[0][0][1]
+                
+                date_match = re.search(date_pattern, text)
+                if date_match:
+                    dates.append((y_pos, f"{date_match.group(1)}-{date_match.group(2)}-{date_match.group(3)}"))
+                
+                time_match = re.search(time_pattern, text)
+                if time_match:
+                    hour, minute, second = time_match.groups()
+                    if 0 <= int(hour) <= 23 and 0 <= int(minute) <= 59 and 0 <= int(second) <= 59:
+                        times.append((y_pos, f"{hour}:{minute}:{second}"))
             
-            if len(valid_times) >= 1:
-                entry_time = valid_times[0]
-                if len(valid_times) >= 2:
-                    exit_time = valid_times[1]
+            print(f"フォールバック: 日付{len(dates)}個、時刻{len(times)}個")
             
-            print(f"最終結果: エントリー={entry_date} {entry_time}, 決済={exit_date} {exit_time}")
+            if len(dates) >= 1:
+                entry_date = dates[0][1]
+                if len(dates) >= 2:
+                    exit_date = dates[1][1]
+            
+            if len(times) >= 1:
+                entry_time = times[0][1]
+                if len(times) >= 2:
+                    exit_time = times[1][1]
+            
+            print(f"フォールバック結果: エントリー={entry_date} {entry_time}, 決済={exit_date} {exit_time}")
         
         return {
             'type': trade_type,
@@ -628,6 +598,7 @@ def extract_fxgt_trade_from_image(image):
             'exit_time': exit_time,
             'raw_text': full_text
         }
+        
     except ImportError:
         return {
             'type': 'ロング',
