@@ -601,19 +601,40 @@ def calculate_trade_statistics(trades):
     unique_dates = set(trade_dates)
     total_days = len(unique_dates)
     
-    for trade in trades:
-        pnl = (trade['exit_price'] - trade['entry_price']) if trade['type'] == "ロング" else (trade['entry_price'] - trade['exit_price'])
+    print(f"=== 統計計算デバッグ ===")
+    print(f"総トレード数: {total}")
+    print(f"トレード日数: {total_days}")
+    
+    for i, trade in enumerate(trades):
+        # 価格差を計算
+        if trade['type'] == "ロング":
+            price_diff = trade['exit_price'] - trade['entry_price']
+        else:
+            price_diff = trade['entry_price'] - trade['exit_price']
+        
+        # ロット数を考慮（金の場合、0.01ロット = 100オンス = 1ドルの価格差で100ドルの損益）
+        lot_size = trade.get('lot_size', 0.01)
+        pnl = price_diff * lot_size * 100  # 金の場合の係数
+        
+        print(f"トレード{i+1}: タイプ={trade['type']}, エントリー={trade['entry_price']}, 決済={trade['exit_price']}, ロット={lot_size}, 損益=${pnl:.2f}")
         
         if pnl > 0:
             wins += 1
             total_profit += pnl
-        else:
+        elif pnl < 0:
             losses += 1
             total_loss += abs(pnl)
+        else:
+            # 損益が0の場合もカウント（引き分け）
+            print(f"  ⚠️ 損益が0です")
         
-        emotion_stats[trade['emotion']]['total'] += 1
+        emotion = trade.get('emotion', '不明')
+        emotion_stats[emotion]['total'] += 1
         if pnl > 0:
-            emotion_stats[trade['emotion']]['wins'] += 1
+            emotion_stats[emotion]['wins'] += 1
+    
+    print(f"勝ち: {wins}, 負け: {losses}")
+    print(f"総利益: ${total_profit:.2f}, 総損失: ${total_loss:.2f}")
     
     win_rate = (wins / total * 100) if total > 0 else 0
     avg_profit = (total_profit / wins) if wins > 0 else 0
@@ -623,6 +644,11 @@ def calculate_trade_statistics(trades):
     
     # 1日平均トレード数
     trades_per_day = total / total_days if total_days > 0 else 0
+    
+    print(f"勝率: {win_rate:.1f}%")
+    print(f"純利益: ${net_profit:.2f}")
+    print(f"プロフィットファクター: {profit_factor:.2f}")
+    print(f"======================")
     
     return {
         'total': total,
@@ -639,7 +665,6 @@ def calculate_trade_statistics(trades):
         'total_days': total_days,
         'trades_per_day': trades_per_day
     }
-
 def generate_harsh_feedback(stats):
     if not stats:
         return "データ不足。最低10トレードは記録してください。"
