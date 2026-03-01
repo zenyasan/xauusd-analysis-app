@@ -428,7 +428,7 @@ def resize_image_for_ocr(image, max_width=1920):
     return image
 
 def extract_fxgt_trade_from_image(image):
-    """FXGTのMT5スクショから取引情報を抽出（矢印分割版）"""
+    """FXGTのMT5スクショから取引情報を抽出（完全柔軟版）"""
     try:
         import easyocr
         import cv2
@@ -461,112 +461,88 @@ def extract_fxgt_trade_from_image(image):
         
         full_text = " ".join(result)
         
-        print(f"=== OCR読み取り全文 ===")
+        print(f"=== OCR読み取り結果 ===")
         print(full_text)
-        print(f"======================")
+        print(f"=====================")
         
         # タイプ（buy/sell）
         trade_type = "ロング" if "buy" in full_text.lower() else "ショート" if "sell" in full_text.lower() else "ロング"
+        print(f"トレードタイプ: {trade_type}")
         
-        # ロット数（より厳密に）
+        # ロット数（0.01〜10.00の範囲の小数）
         lot = 0.01
-        # パターン1: "buy 0.03" または "buy0.03"
-        lot_pattern = r'(?:buy|sell)\s*(\d\.\d{2})'
-        lot_match = re.search(lot_pattern, full_text, re.IGNORECASE)
-        if lot_match:
-            lot = float(lot_match.group(1))
-            print(f"✅ ロット数検出: {lot}")
-        else:
-            # パターン2: 0.01〜10.0の範囲を探す
-            lot_candidates = re.findall(r'\b(\d\.\d{2})\b', full_text)
-            for candidate in lot_candidates:
-                val = float(candidate)
-                if 0.01 <= val <= 10.0:
-                    lot = val
-                    print(f"✅ ロット数検出（候補から）: {lot}")
-                    break
+        lot_pattern = r'\b(\d+\.\d{2})\b'
+        lot_candidates = re.findall(lot_pattern, full_text)
+        for candidate in lot_candidates:
+            val = float(candidate)
+            if 0.01 <= val <= 10.0:
+                lot = val
+                print(f"✅ ロット数: {lot}")
+                break
         
-        # エントリー価格 → 決済価格
+        # エントリー価格・決済価格（4桁または5桁の小数）
         entry_price = 0
         exit_price = 0
-        price_pattern = r'(\d{4,5}\.\d{1,2})\s*(?:→|-\s*>|->)\s*(\d{4,5}\.\d{1,2})'
-        price_match = re.search(price_pattern, full_text)
-        if price_match:
-            entry_price = float(price_match.group(1))
-            exit_price = float(price_match.group(2))
-            print(f"✅ 価格検出: エントリー={entry_price}, 決済={exit_price}")
+        price_pattern = r'\b(\d{4,5}\.\d{1,2})\b'
+        prices = re.findall(price_pattern, full_text)
         
-        # 日時抽出（矢印で分割する方式）
+        # 4桁・5桁の価格だけをフィルタ
+        valid_prices = []
+        for price in prices:
+            val = float(price)
+            if 1000 <= val <= 99999:  # 金価格の範囲
+                valid_prices.append(val)
+        
+        if len(valid_prices) >= 2:
+            entry_price = valid_prices[0]
+            exit_price = valid_prices[1]
+            print(f"✅ 価格: エントリー={entry_price}, 決済={exit_price}")
+        
+        # 日時抽出（柔軟な区切り文字対応）
         entry_date = datetime.now().strftime('%Y-%m-%d')
         entry_time = "00:00:00"
         exit_date = entry_date
         exit_time = "00:00:00"
         
-        # 完全な日時を含む行を探す
-        datetime_full_pattern = r'(\d{4}[.\-/]\d{2}[.\-/]\d{2}\s+\d{2}[:\.]?\d{2}[:\.]?\d{2})\s*(?:→|->|-\s*>)\s*(\d{4}[.\-/]\d{2}[.\-/]\d{2}\s+\d{2}[:\.]?\d{2}[:\.]?\d{2})'
-        datetime_full_match = re.search(datetime_full_pattern, full_text)
+        # パターン: 年.月.日 時,分.秒 または 年.月.日 時:分:秒 など
+        # 区切り文字: . - / および : , .
+        datetime_pattern = r'(\d{4})[.\-/](\d{2})[.\-/](\d{2})\s+(\d{2})[,:\.](\d{2})[,:\.](\d{2})'
+        datetime_matches = re.findall(datetime_pattern, full_text)
         
-        if datetime_full_match:
-            # 矢印の左側（エントリー）と右側（決済）を取得
-            entry_datetime_str = datetime_full_match.group(1)
-            exit_datetime_str = datetime_full_match.group(2)
-            
-            print(f"矢印で分割:")
-            print(f"  左側（エントリー）: {entry_datetime_str}")
-            print(f"  右側（決済）: {exit_datetime_str}")
-            
-            # エントリー日時をパース
-            entry_dt_pattern = r'(\d{4})[.\-/](\d{2})[.\-/](\d{2})\s+(\d{2})[:\.]?(\d{2})[:\.]?(\d{2})'
-            entry_dt_match = re.search(entry_dt_pattern, entry_datetime_str)
-            if entry_dt_match:
-                year, month, day, hour, minute, second = entry_dt_match.groups()
-                # バリデーション
-                if (0 <= int(hour) <= 23 and 0 <= int(minute) <= 59 and 
-                    0 <= int(second) <= 59 and 1 <= int(month) <= 12 and 
-                    1 <= int(day) <= 31):
-                    entry_date = f"{year}-{month}-{day}"
-                    entry_time = f"{hour}:{minute}:{second}"
-                    print(f"✅ エントリー日時: {entry_date} {entry_time}")
-            
-            # 決済日時をパース
-            exit_dt_match = re.search(entry_dt_pattern, exit_datetime_str)
-            if exit_dt_match:
-                year, month, day, hour, minute, second = exit_dt_match.groups()
-                # バリデーション
-                if (0 <= int(hour) <= 23 and 0 <= int(minute) <= 59 and 
-                    0 <= int(second) <= 59 and 1 <= int(month) <= 12 and 
-                    1 <= int(day) <= 31):
-                    exit_date = f"{year}-{month}-{day}"
-                    exit_time = f"{hour}:{minute}:{second}"
-                    print(f"✅ 決済日時: {exit_date} {exit_time}")
-        else:
-            print("❌ 矢印で分割できませんでした。個別に探します...")
-            
-            # フォールバック：日時を個別に2つ探す
-            datetime_pattern = r'(\d{4})[.\-/](\d{2})[.\-/](\d{2})\s+(\d{2})[:\.](\d{2})[:\.](\d{2})'
-            datetime_matches = re.findall(datetime_pattern, full_text)
-            
-            valid_datetimes = []
-            for match in datetime_matches:
-                year, month, day, hour, minute, second = match
-                if (0 <= int(hour) <= 23 and 0 <= int(minute) <= 59 and 
-                    0 <= int(second) <= 59 and 1 <= int(month) <= 12 and 
-                    1 <= int(day) <= 31):
+        print(f"日時検出数: {len(datetime_matches)}")
+        
+        valid_datetimes = []
+        for match in datetime_matches:
+            year, month, day, hour, minute, second = match
+            # バリデーション
+            try:
+                h, m, s = int(hour), int(minute), int(second)
+                mo, d = int(month), int(day)
+                
+                if (0 <= h <= 23 and 0 <= m <= 59 and 0 <= s <= 59 and 
+                    1 <= mo <= 12 and 1 <= d <= 31):
                     valid_datetimes.append({
                         'date': f"{year}-{month}-{day}",
                         'time': f"{hour}:{minute}:{second}"
                     })
-            
-            if len(valid_datetimes) >= 2:
-                entry_date = valid_datetimes[0]['date']
-                entry_time = valid_datetimes[0]['time']
-                exit_date = valid_datetimes[1]['date']
-                exit_time = valid_datetimes[1]['time']
-                print(f"✅ 個別検出: エントリー={entry_date} {entry_time}, 決済={exit_date} {exit_time}")
-            elif len(valid_datetimes) == 1:
-                entry_date = valid_datetimes[0]['date']
-                entry_time = valid_datetimes[0]['time']
-                print(f"⚠️ エントリーのみ検出: {entry_date} {entry_time}")
+                    print(f"✅ 有効な日時: {year}-{month}-{day} {hour}:{minute}:{second}")
+                else:
+                    print(f"❌ 無効な日時: {year}-{month}-{day} {hour}:{minute}:{second}")
+            except ValueError:
+                print(f"❌ 変換エラー: {match}")
+        
+        if len(valid_datetimes) >= 2:
+            entry_date = valid_datetimes[0]['date']
+            entry_time = valid_datetimes[0]['time']
+            exit_date = valid_datetimes[1]['date']
+            exit_time = valid_datetimes[1]['time']
+            print(f"✅ 最終結果: エントリー={entry_date} {entry_time}, 決済={exit_date} {exit_time}")
+        elif len(valid_datetimes) == 1:
+            entry_date = valid_datetimes[0]['date']
+            entry_time = valid_datetimes[0]['time']
+            print(f"⚠️ エントリーのみ: {entry_date} {entry_time}")
+        else:
+            print("❌ 日時が検出できませんでした")
         
         return {
             'type': trade_type,
@@ -593,6 +569,9 @@ def extract_fxgt_trade_from_image(image):
             'raw_text': 'OCRライブラリが利用できません。手動で入力してください。'
         }
     except Exception as e:
+        import traceback
+        error_detail = traceback.format_exc()
+        print(f"❌ エラー詳細: {error_detail}")
         return {
             'type': 'ロング',
             'lot': 0.01,
