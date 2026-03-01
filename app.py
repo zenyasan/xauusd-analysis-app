@@ -1558,9 +1558,14 @@ try:
         st.rerun()
 
 except Exception as e:
-    st.error(f"❌ エラー: {e}")
+    st.error(f"❌ エラーが発生しました: {e}")
     import traceback
-    st.code(traceback.format_exc())
+    error_details = traceback.format_exc()
+    st.code(error_details)
+    
+    # デバッグ情報を表示
+    st.warning(f"選択された設定: 時間足={selected_timeframe}, スタイル={trade_style}")
+    st.info("この組み合わせでエラーが発生しています。設定を変更してください。")
 
 st.sidebar.markdown("---")
 st.sidebar.info(f"""
