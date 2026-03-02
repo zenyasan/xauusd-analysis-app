@@ -1527,7 +1527,6 @@ try:
                 with col4:
                     st.metric("総トレード", stats['total'])
                     
-                st.markdown(generate_advice(stats))
                 # PF用語解説
 
                 with st.expander("ℹ️ プロフィットファクター（PF）とは", expanded=False):
