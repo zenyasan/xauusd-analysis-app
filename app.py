@@ -1530,6 +1530,11 @@ try:
                 st.markdown(generate_harsh_feedback(stats))
                 
                 # PF用語解説
+
+                # 空行を追加
+                st.markdown("")
+                st.markdown("")
+
                 with st.expander("ℹ️ プロフィットファクター（PF）とは", expanded=False):
                     st.markdown("""
 **プロフィットファクター（PF）の見方**
