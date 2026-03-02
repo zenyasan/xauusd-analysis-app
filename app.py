@@ -1546,7 +1546,7 @@ try:
 """)
                 st.markdown('</div>', unsafe_allow_html=True)
                 
-                st.markdown(generate_advice(stats))
+
         else:
             st.info("統計分析にはトレードデータが必要です")
     
