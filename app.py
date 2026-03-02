@@ -1549,7 +1549,7 @@ try:
     PF = 300 ÷ 150 = 2.0（良好）
     """)
                 
-                st.markdown(generate_advice(stats))
+    st.markdown(generate_advice(stats))
         else:
             st.info("統計分析にはトレードデータが必要です")
     
