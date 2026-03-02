@@ -1527,7 +1527,7 @@ try:
                 with col4:
                     st.metric("総トレード", stats['total'])
                 
-            st.markdown(generate_harsh_feedback(stats))
+                st.markdown(generate_harsh_feedback(stats))
                 
                 st.markdown("")
                 st.markdown("")
