@@ -693,30 +693,30 @@ def generate_harsh_feedback(stats):
     
     # 2. 勝率とPFのバランス評価
     if stats['win_rate'] < 40 and stats['profit_factor'] < 1.0:
-        feedback += "- **勝率も利益率も低い状態です。** エントリータイミングと損切り・利確の両方を見直す必要があります。根本的な改善が必要です。\n"
+        feedback += "- **勝率も利益率も低い状態です。**\n\n  エントリータイミングと損切り・利確の両方を見直す必要があります。根本的な改善が必要です。\n"
         has_weakness = True
     elif stats['win_rate'] > 60 and stats['profit_factor'] < 1.5:
-        feedback += "- **勝率は高いですが、利益が小さいです。** 利確を早くしすぎています。トレンドに乗り続ける練習をしてください。小さな利益で満足せず、大きく伸ばすことを意識しましょう。\n"
+        feedback += "- **勝率は高いですが、利益が小さいです。**\n\n  利確を早くしすぎています。トレンドに乗り続ける練習をしてください。小さな利益で満足せず、大きく伸ばすことを意識しましょう。\n"
         has_weakness = True
     elif stats['win_rate'] < 50 and stats['profit_factor'] < 1.0:
-        feedback += "- **勝率が低く、トータルで負けています。** トレード手法が間違っている可能性が高い。このまま続けると資金を失います。今すぐ見直してください。\n"
+        feedback += "- **勝率が低く、トータルで負けています。**\n\n  トレード手法が間違っている可能性が高い。このまま続けると資金を失います。今すぐ見直してください。\n"
         has_weakness = True
     
     # 3. 損益バランス
     if stats['avg_loss'] > stats['avg_profit']:
-        feedback += "- **損大利小になっています。** 損切りが遅すぎる、または利確が早すぎる。トレーダーとして致命的な欠陥です。損切りは早く、利確は遅く。\n"
+        feedback += "- **損大利小になっています。**\n\n  損切りが遅すぎる、または利確が早すぎる。トレーダーとして致命的な欠陥です。損切りは早く、利確は遅く。\n"
         has_weakness = True
     
     if stats['avg_loss'] > stats['avg_profit'] * 2:
-        feedback += "- **損切りが遅すぎます。** ナンピン（負けを取り戻そうとさらにポジションを持つ）していませんか？損失を先延ばしにすると、さらに傷口が広がります。\n"
+        feedback += "- **損切りが遅すぎます。**\n\n  ナンピン（負けを取り戻そうとさらにポジションを持つ）していませんか？損失を先延ばしにすると、さらに傷口が広がります。\n"
         has_weakness = True
     
     # 4. プロフィットファクター
     if stats['profit_factor'] < 1:
-        feedback += "- **プロフィットファクター1未満。トータルで負けています。** このままでは破産確定です。今すぐトレードを止めて見直してください。\n"
+        feedback += "- **プロフィットファクター1未満。トータルで負けています。**\n\n  このままでは破産確定です。今すぐトレードを止めて見直してください。\n"
         has_weakness = True
     elif stats['profit_factor'] < 1.5:
-        feedback += "- **プロフィットファクターが低すぎます。** ギリギリ勝っているだけ。安定して勝てていません。\n"
+        feedback += "- **プロフィットファクターが低すぎます。**\n\n  ギリギリ勝っているだけ。安定して勝てていません。\n"
         has_weakness = True
     
     # 5. 感情的トレード
@@ -728,12 +728,12 @@ def generate_harsh_feedback(stats):
                 emotion_issues.append(f"{emotion}（勝率{wr:.0f}%）")
     
     if emotion_issues:
-        feedback += f"- **感情的なトレードで負けています: {', '.join(emotion_issues)}。** メンタルコントロールができていない。冷静さを完全に欠いています。\n"
+        feedback += f"- **感情的なトレードで負けています: {', '.join(emotion_issues)}。**\n\n  メンタルコントロールができていない。冷静さを完全に欠いています。\n"
         has_weakness = True
     
     # 6. オーバートレード（1日平均15回以上）
     if stats['total_days'] >= 3 and stats['trades_per_day'] >= 15:
-        feedback += f"- **1日平均{stats['trades_per_day']:.1f}回トレードしています。オーバートレードの可能性があります。** 質より量になっていませんか？厳選したチャンスだけを狙いましょう。無理にトレードする必要はありません。\n"
+        feedback += f"- **1日平均{stats['trades_per_day']:.1f}回トレードしています。オーバートレードの可能性があります。**\n\n  質より量になっていませんか？厳選したチャンスだけを狙いましょう。無理にトレードする必要はありません。\n"
         has_weakness = True
     
     if not has_weakness and stats['total'] >= 10:
