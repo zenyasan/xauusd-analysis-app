@@ -90,9 +90,9 @@ st.markdown("""
         to { filter: drop-shadow(0 0 20px #0055ff); }
     }
     
-    .stApp p, .stMarkdown p {
+        .stApp p, .stMarkdown p {
         font-family: 'Rajdhani', sans-serif !important;
-        color: #8b9dc3 !important;
+        color: #c0d8ff !important;
     }
     
     [data-testid="stMetricValue"] {
