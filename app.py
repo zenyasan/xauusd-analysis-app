@@ -1526,7 +1526,8 @@ try:
                     st.metric("PF", f"{stats['profit_factor']:.2f}")
                 with col4:
                     st.metric("総トレード", stats['total'])
-                    
+
+                
                 # PF用語解説
 
                 with st.expander("ℹ️ プロフィットファクター（PF）とは", expanded=False):
