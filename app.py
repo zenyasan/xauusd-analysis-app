@@ -15,7 +15,7 @@ import re
 import io
 
 # 定数定義
-GOLD_FUTURES_ADJUSTMENT = 19.0  # 先物とスポットの価格差
+GOLD_FUTURES_ADJUSTMENT = 29.0  # 先物とスポットの価格差
 
 st.set_page_config(page_title="XAUUSD分析", page_icon="💰", layout="wide", initial_sidebar_state="expanded")
 
