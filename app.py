@@ -801,21 +801,21 @@ st.markdown(f'''
     <div class="sticky-subtitle">マルチタイムフレーム対応版 - 高精度戦略</div>
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.3rem; margin-top: 0.3rem;">
         <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.2rem; text-align: center;">
-            <div style="font-size: 0.45rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">🔽 サポート</div>
-            <div style="font-size: 0.7rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">${st.session_state.support_value:,.0f}</div>
+            <div style="font-size: 0.75rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">🔽 サポート</div>
+            <div style="font-size: 1.0rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">${st.session_state.support_value:,.0f}</div>
         </div>
         <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.2rem; text-align: center;">
-            <div style="font-size: 0.45rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">💰 現在価格</div>
-            <div style="font-size: 0.7rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">${st.session_state.current_price:,.2f}</div>
+            <div style="font-size: 0.75rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">💰 現在価格</div>
+            <div style="font-size: 1.0rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">${st.session_state.current_price:,.2f}</div>
             <div style="font-size: 0.4rem; color: #8b9dc3; line-height: 1;">{st.session_state.price_change:+.2f} ({st.session_state.price_pct:+.2f}%)</div>
         </div>
         <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.2rem; text-align: center;">
-            <div style="font-size: 0.45rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">🔼 レジスタンス</div>
-            <div style="font-size: 0.7rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">${st.session_state.resistance_value:,.0f}</div>
+            <div style="font-size: 0.75rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">🔼 レジスタンス</div>
+            <div style="font-size: 1.0rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">${st.session_state.resistance_value:,.0f}</div>
         </div>
         <div style="background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%); border: 1px solid rgba(0, 170, 255, 0.3); border-radius: 8px; padding: 0.2rem; text-align: center;">
-            <div style="font-size: 0.45rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">📈 RSI (7)</div>
-            <div style="font-size: 0.7rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">{st.session_state.rsi_value:.1f}</div>
+            <div style="font-size: 0.75rem; color: #8b9dc3; margin-bottom: 0.05rem; line-height: 1;">📈 RSI (7)</div>
+            <div style="font-size: 1.0rem; font-weight: bold; background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1;">{st.session_state.rsi_value:.1f}</div>
             <div style="font-size: 0.4rem; color: #8b9dc3; line-height: 1;">{st.session_state.rsi_status}</div>
         </div>
     </div>
