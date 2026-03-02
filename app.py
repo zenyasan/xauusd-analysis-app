@@ -1513,45 +1513,45 @@ try:
             st.info("トレード記録がありません")
     
     with tab4:
-    if st.session_state.trade_history:
-        stats = calculate_trade_statistics(st.session_state.trade_history)
-        
-        if stats:
-            col1, col2, col3, col4 = st.columns(4)
-            with col1:
-                st.metric("勝率", f"{stats['win_rate']:.1f}%")
-            with col2:
-                st.metric("総損益", f"${stats['net_profit']:.2f}")
-            with col3:
-                st.metric("PF", f"{stats['profit_factor']:.2f}")
-            with col4:
-                st.metric("総トレード", stats['total'])
+        if st.session_state.trade_history:
+            stats = calculate_trade_statistics(st.session_state.trade_history)
             
-            st.markdown(generate_harsh_feedback(stats))
-            
-            st.markdown("")
-            st.markdown("")
-            
-            with st.expander("ℹ️ プロフィットファクター（PF）とは", expanded=False):
-                st.markdown("""
-**プロフィットファクター（PF）の見方**
-
-総利益 ÷ 総損失 で計算される指標
-
-- **1.0未満**: トータルで負けている
-- **1.0〜1.5**: ギリギリ勝っている
-- **1.5〜2.0**: 良好
-- **2.0以上**: 優秀
-- **3.0以上**: プロレベル
-
-**例：**
-総利益 $300、総損失 $150
-PF = 300 ÷ 150 = 2.0（良好）
-""")
-            
-            st.markdown(generate_advice(stats))
-    else:
-        st.info("統計分析にはトレードデータが必要です")
+            if stats:
+                col1, col2, col3, col4 = st.columns(4)
+                with col1:
+                    st.metric("勝率", f"{stats['win_rate']:.1f}%")
+                with col2:
+                    st.metric("総損益", f"${stats['net_profit']:.2f}")
+                with col3:
+                    st.metric("PF", f"{stats['profit_factor']:.2f}")
+                with col4:
+                    st.metric("総トレード", stats['total'])
+                
+                st.markdown(generate_harsh_feedback(stats))
+                
+                st.markdown("")
+                st.markdown("")
+                
+                with st.expander("ℹ️ プロフィットファクター（PF）とは", expanded=False):
+                    st.markdown("""
+    **プロフィットファクター（PF）の見方**
+    
+    総利益 ÷ 総損失 で計算される指標
+    
+    - **1.0未満**: トータルで負けている
+    - **1.0〜1.5**: ギリギリ勝っている
+    - **1.5〜2.0**: 良好
+    - **2.0以上**: 優秀
+    - **3.0以上**: プロレベル
+    
+    **例：**
+    総利益 $300、総損失 $150
+    PF = 300 ÷ 150 = 2.0（良好）
+    """)
+                
+                st.markdown(generate_advice(stats))
+        else:
+            st.info("統計分析にはトレードデータが必要です")
     
     st.markdown("---")
     st.caption(f"⏰ 最終更新: {now_jst.strftime('%Y年%m月%d日 %H:%M:%S')} JST")
