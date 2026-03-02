@@ -1527,6 +1527,7 @@ try:
                 with col4:
                     st.metric("総トレード", stats['total'])
                     
+                    st.markdown(generate_advice(stats))
                 
                 # PF用語解説
 
