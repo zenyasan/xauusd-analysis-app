@@ -982,7 +982,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
         with st.expander("ℹ️ 用語解説", expanded=False):
             st.markdown("**RSI (7)** - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断")
-        st.markdown('</div>', unsafe_allow_html=True)
         
         analysis3 = f"""
 - **MACD**: {macd_trend}"""
@@ -999,7 +998,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
         with st.expander("ℹ️ 用語解説", expanded=False):
             st.markdown("**ATR（ボラティリティ指標）** - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応")
-        st.markdown('</div>', unsafe_allow_html=True)
         
         analysis5 = f"""
 - **ピボット**: ${pivot:,.2f}"""
@@ -1008,7 +1006,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
         with st.expander("ℹ️ 用語解説", expanded=False):
             st.markdown("**ピボットポイント** - 前日の高値・安値・終値から計算される基準価格。トレーダーが注目するポイント / S1（サポート1）: 第1サポートライン（下値支持） / R1（レジスタンス1）: 第1レジスタンスライン（上値抵抗）")
-        st.markdown('</div>', unsafe_allow_html=True)
         
         analysis6 = f"""
 ### 🎯 高精度エントリー戦略
