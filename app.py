@@ -255,7 +255,19 @@ st.markdown("""
         padding: 0.4rem !important;
         line-height: 1.3 !important;
     }
+
+    .stExpander .streamlit-expanderContent p {
+    font-size: 0.13rem !important;
+    }
     
+    .stExpander .streamlit-expanderContent div {
+        font-size: 0.13rem !important;
+    }
+    
+    .stExpander .streamlit-expanderContent * {
+        font-size: 0.13rem !important;
+    }
+
     .stAlert {
         background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%);
         border-left: 4px solid #00aaff;
