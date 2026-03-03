@@ -985,7 +985,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         st.markdown(analysis)
         
         with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown("**現在価格の変動率** - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い")
+            st.markdown('<div style="font-size: 0.5rem;">**現在価格の変動率** - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い</div>', unsafe_allow_html=True)
         
         analysis2 = f"""
 - **RSI (7)**: {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}"""
@@ -993,7 +993,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         st.markdown(analysis2)
         
         with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown("**RSI (7)** - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断")
+            st.markdown('<div style="font-size: 0.5rem;">**RSI (7)** - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断</div>', unsafe_allow_html=True)
         
         analysis3 = f"""
 - **MACD**: {macd_trend}"""
@@ -1001,7 +1001,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         st.markdown(analysis3)
         
         with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown("**MACD** - 🟢 買いシグナル: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり / 🔴 売りシグナル: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり")
+            st.markdown('<div style="font-size: 0.5rem;">**MACD** - 🟢 買いシグナル: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり / 🔴 売りシグナル: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり</div>', unsafe_allow_html=True)
      
         analysis4 = f"""
 - **ATR**: {atr:.2f}（ボラティリティ指標）"""
@@ -1009,7 +1009,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         st.markdown(analysis4)
         
         with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown("**ATR（ボラティリティ指標）** - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応")
+            st.markdown('<div style="font-size: 0.5rem;">**ATR（ボラティリティ指標）** - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応</div>', unsafe_allow_html=True)
         
         analysis5 = f"""
 - **ピボット**: ${pivot:,.2f}"""
@@ -1017,7 +1017,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         st.markdown(analysis5)
         
         with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown("**ピボットポイント** - 前日の高値・安値・終値から計算される基準価格。トレーダーが注目するポイント / S1（サポート1）: 第1サポートライン（下値支持） / R1（レジスタンス1）: 第1レジスタンスライン（上値抵抗）")
+            st.markdown('<div style="font-size: 0.5rem;">**ピボットポイント** - 前日の高値・安値・終値から計算される基準価格。トレーダーが注目するポイント / S1（サポート1）: 第1サポートライン（下値支持） / R1（レジスタンス1）: 第1レジスタンスライン（上値抵抗）</div>', unsafe_allow_html=True)
         
         analysis6 = f"""
 ### 🎯 高精度エントリー戦略
