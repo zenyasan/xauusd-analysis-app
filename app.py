@@ -254,6 +254,7 @@ st.markdown("""
         background: rgba(0, 170, 255, 0.05) !important;
         padding: 0.4rem !important;
         line-height: 1.3 !important;
+    }
     
     .stAlert {
         background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 85, 255, 0.1) 100%);
