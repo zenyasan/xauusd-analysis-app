@@ -990,17 +990,14 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
         st.markdown(analysis3)
         
-        st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
             st.markdown("**MACD** - 🟢 買いシグナル: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり / 🔴 売りシグナル: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
+     
         analysis4 = f"""
 - **ATR**: {atr:.2f}（ボラティリティ指標）"""
         
         st.markdown(analysis4)
         
-        st.markdown('<div class="explanation-expander">', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
             st.markdown("**ATR（ボラティリティ指標）** - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応")
         st.markdown('</div>', unsafe_allow_html=True)
