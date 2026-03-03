@@ -974,7 +974,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
         with st.expander("ℹ️ 用語解説", expanded=False):
             st.markdown("**現在価格の変動率** - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い")
-        st.markdown('</div>', unsafe_allow_html=True)
         
         analysis2 = f"""
 - **RSI (7)**: {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}"""
