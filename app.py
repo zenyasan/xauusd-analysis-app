@@ -249,11 +249,11 @@ st.markdown("""
     }
 
     div[data-testid="stExpander"] summary {
-    background: rgba(10, 14, 39, 0.95) !important;
+    background: transparent !important;
     }
     
     div[data-testid="stExpander"] details summary {
-        background: rgba(10, 14, 39, 0.95) !important;
+    background: transparent !important;
     }
     
     div[data-testid="stExpander"] details summary p {
