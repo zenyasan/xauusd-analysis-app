@@ -248,6 +248,14 @@ st.markdown("""
         margin-bottom: 0.3rem !important;
     }
 
+    div[data-testid="stExpander"] summary {
+    background: rgba(10, 14, 39, 0.95) !important;
+    }
+    
+    div[data-testid="stExpander"] details summary {
+        background: rgba(10, 14, 39, 0.95) !important;
+    }
+    
     div[data-testid="stExpander"] details summary p {
     font-size: 0.8rem !important;
     }
