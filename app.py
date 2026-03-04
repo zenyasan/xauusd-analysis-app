@@ -256,12 +256,12 @@ st.markdown("""
     font-size: 0.8rem !important;
     }
     
-    .stExpander .streamlit-expanderContent {
-        font-size: 0.13rem !important;
-        color: #c0c0c0 !important;
-        background: rgba(0, 170, 255, 0.05) !important;
-        padding: 0.4rem !important;
-        line-height: 1.3 !important;
+   .stExpander .streamlit-expanderContent {
+    font-size: 0.13rem !important;
+    color: #c0c0c0 !important;
+    background: rgba(10, 14, 39, 0.9) !important;
+    padding: 0.4rem !important;
+    line-height: 1.3 !important;
     }
 
     .stExpander .streamlit-expanderContent p {
