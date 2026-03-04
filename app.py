@@ -1000,7 +1000,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)"""
         
         st.markdown(analysis)
-        st.markdown('<style>div.stMarkdown:has(+ style) {margin-bottom: -0.5rem !important;}</style>', unsafe_allow_html=True)
 
         st.markdown('<style>.stExpander .streamlit-expanderHeader {font-size: 0.3rem !important;}</style>', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
@@ -1010,7 +1009,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - **RSI (7)**: {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}"""
         
         st.markdown(analysis2)
-        st.markdown('<style>div.stMarkdown:has(+ style) {margin-bottom: -0.5rem !important;}</style>', unsafe_allow_html=True)
 
         st.markdown('<style>.stExpander .streamlit-expanderHeader {font-size: 0.3rem !important;}</style>', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
@@ -1020,7 +1018,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - **MACD**: {macd_trend}"""
         
         st.markdown(analysis3)
-        st.markdown('<style>div.stMarkdown:has(+ style) {margin-bottom: -0.5rem !important;}</style>', unsafe_allow_html=True)
 
         st.markdown('<style>.stExpander .streamlit-expanderHeader {font-size: 0.3rem !important;}</style>', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
@@ -1030,7 +1027,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - **ATR**: {atr:.2f}（ボラティリティ指標）"""
         
         st.markdown(analysis4)
-        st.markdown('<style>div.stMarkdown:has(+ style) {margin-bottom: -0.5rem !important;}</style>', unsafe_allow_html=True)
 
         st.markdown('<style>.stExpander .streamlit-expanderHeader {font-size: 0.3rem !important;}</style>', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
@@ -1040,7 +1036,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - **ピボット**: ${pivot:,.2f}"""
         
         st.markdown(analysis5)
-        st.markdown('<style>div.stMarkdown:has(+ style) {margin-bottom: -0.5rem !important;}</style>', unsafe_allow_html=True)
 
         st.markdown('<style>.stExpander .streamlit-expanderHeader {font-size: 0.3rem !important;}</style>', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
