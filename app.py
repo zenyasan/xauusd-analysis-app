@@ -249,11 +249,11 @@ st.markdown("""
     }
 
     div[data-testid="stExpander"] details summary p {
-    font-size: 0.4rem !important;
+    font-size: 0.8rem !important;
     }
     
     div[data-testid="stExpander"] details summary {
-        font-size: 0.4rem !important;
+    font-size: 0.8rem !important;
     }
     
     .stExpander .streamlit-expanderContent {
