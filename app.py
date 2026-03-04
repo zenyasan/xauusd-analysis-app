@@ -236,6 +236,7 @@ st.markdown("""
     }
 .stExpander {
         margin-top: -1.2rem !important;
+        margin-bottom: -0.5rem !important;
    }
     
     .stExpander .streamlit-expanderHeader {
