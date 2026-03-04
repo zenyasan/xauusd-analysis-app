@@ -1001,7 +1001,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
         st.markdown(analysis)
 
-        st.markdown('<div style="margin-top: -2.0rem;"></div>', unsafe_allow_html=True)
+        st.markdown('<div style="margin-top: -0.5rem;"></div>', unsafe_allow_html=True)
         st.markdown('<style>.stExpander .streamlit-expanderHeader {font-size: 0.3rem !important;}</style>', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
             st.markdown('<div style="font-size: 0.7rem; color: #d0d0d0;">**現在価格の変動率** - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い</div>', unsafe_allow_html=True)
