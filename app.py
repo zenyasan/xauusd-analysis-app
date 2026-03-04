@@ -239,7 +239,7 @@ st.markdown("""
    }
     
     .stExpander .streamlit-expanderHeader {
-        font-size: 0.5rem !important;
+        font-size: 0.4rem !important;
         background: rgba(0, 170, 255, 0.15) !important;
         color: #c0c0c0 !important;
         padding: 0.2rem 0.4rem !important;
