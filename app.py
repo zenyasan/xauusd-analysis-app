@@ -235,7 +235,7 @@ st.markdown("""
         box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
     }
 .stExpander {
-        margin-top: -1.9rem !important;
+        margin-top: -2.2rem !important;
         margin-bottom: -0.5rem !important;
    }
     
