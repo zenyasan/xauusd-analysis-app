@@ -247,6 +247,14 @@ st.markdown("""
         margin-top: 0 !important;
         margin-bottom: 0.3rem !important;
     }
+
+    div[data-testid="stExpander"] details summary p {
+    font-size: 0.4rem !important;
+    }
+    
+    div[data-testid="stExpander"] details summary {
+        font-size: 0.4rem !important;
+    }
     
     .stExpander .streamlit-expanderContent {
         font-size: 0.13rem !important;
