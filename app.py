@@ -269,7 +269,7 @@ st.markdown("""
     font-size: 0.13rem !important;
     color: #c0c0c0 !important;
     background: rgba(0, 170, 255, 0.15) !important;
-    padding: 0.2rem 0.4rem !important;
+    padding: 0.1rem 0.4rem !important;
     line-height: 1.3 !important;
     }
 
