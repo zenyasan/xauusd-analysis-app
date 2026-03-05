@@ -1458,17 +1458,10 @@ try:
 
     st.markdown("<br>" * 5, unsafe_allow_html=True)
     
-    st.plotly_chart(fig, use_container_width=True, config={
-        'scrollZoom': True,
-        'displayModeBar': True,
-        'displaylogo': False,
-        'doubleClick': 'reset',
-        'responsive': True,
-        'modeBarButtonsToRemove': [],
-        'staticPlot': False,
-        'editable': False,
-        'showTips': True
-    })
+    # Lightweight Chartsを使用
+    import streamlit.components.v1 as components
+    chart_html = create_lightweight_chart(df, current, support, resistance, pivot, r1, s1, selected_timeframe)
+    components.html(chart_html, height=600, scrolling=False)
 
     st.markdown("""
     <script>
