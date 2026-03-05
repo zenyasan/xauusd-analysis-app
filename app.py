@@ -1296,7 +1296,10 @@ try:
     template='plotly_dark',
     paper_bgcolor='rgba(10,14,39,0.8)',
     plot_bgcolor='rgba(10,14,39,0.5)',
-    font=dict(family='Rajdhani', color='#8b9dc3')
+    font=dict(family='Rajdhani', color='#8b9dc3'),
+    dragmode=False,
+    xaxis=dict(fixedrange=False),
+    yaxis=dict(fixedrange=False)
     )
     
     fig.update_xaxes(
