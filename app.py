@@ -377,7 +377,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def check_password():
-def check_password():
     def password_entered():
         if hashlib.sha256(st.session_state["password"].encode()).hexdigest() == "4e42de48f9cdf95d8cbf5ad17f11a63601120eb1cdaa35eae088bb75196e4a67":
             st.session_state["password_correct"] = True
@@ -396,7 +395,6 @@ def check_password():
         return False
     return True
 
-if not check_password():
 if not check_password():
     st.stop()
 
