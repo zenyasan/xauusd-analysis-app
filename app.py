@@ -1015,7 +1015,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
             st.markdown('<div style="font-size: 0.7rem; color: #d0d0d0; padding: 0.2rem 0.5rem; margin-top: -0.5rem;">RSI (7) - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断</div>', unsafe_allow_html=True)
         
         analysis3 = f"""
-- **MACD**: {macd_trend}"""
+- MACD: {macd_trend}"""
         
         st.markdown(analysis3)
 
@@ -1024,7 +1024,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
             st.markdown('<div style="font-size: 0.7rem; color: #d0d0d0; padding: 0.2rem 0.5rem; margin-top: -0.5rem;">**MACD** - 🟢 買いシグナル: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり / 🔴 売りシグナル: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり</div>', unsafe_allow_html=True)
      
         analysis4 = f"""
-- **ATR**: {atr:.2f}（ボラティリティ指標）"""
+- ATR: {atr:.2f}（ボラティリティ指標）"""
         
         st.markdown(analysis4)
 
@@ -1033,7 +1033,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
             st.markdown('<div style="font-size: 0.7rem; color: #d0d0d0; padding: 0.2rem 0.5rem; margin-top: -0.5rem;">**ATR（ボラティリティ指標）** - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応</div>', unsafe_allow_html=True)
         
         analysis5 = f"""
-- **ピボット**: ${pivot:,.2f}"""
+- ピボット: ${pivot:,.2f}"""
         
         st.markdown(analysis5)
 
