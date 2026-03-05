@@ -1312,8 +1312,9 @@ try:
     'scrollZoom': True,
     'displayModeBar': True,
     'displaylogo': False,
-    'modeBarButtonsToRemove': ['select2d', 'lasso2d'],
-    'doubleClick': 'reset'
+    'modeBarButtonsToAdd': ['resetScale2d'],
+    'doubleClick': 'reset',
+    'responsive': True
     })
     
     st.caption(f"💡 価格表示について：先物価格（GC=F）から{GOLD_FUTURES_ADJUSTMENT:.0f}ドル補正してスポット価格相当を表示しています")
