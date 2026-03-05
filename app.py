@@ -929,7 +929,150 @@ def get_gold_data(period, interval):
     except Exception as e:
         st.error(f"データ取得エラー: {e}")
         return None
+def create_lightweight_chart(df, current, support, resistance, pivot, r1, s1, selected_timeframe):
+    """Lightweight Charts (TradingView) でチャートを生成"""
+    
+    # データをJSON形式に変換
+    candlestick_data = []
+    for index, row in df.iterrows():
+        candlestick_data.append({
+            'time': int(index.timestamp()),
+            'open': float(row['Open']),
+            'high': float(row['High']),
+            'low': float(row['Low']),
+            'close': float(row['Close'])
+        })
+    
+    # SMA20データ
+    sma20_data = []
+    for index, row in df.iterrows():
+        if not pd.isna(row.get('SMA_20')):
+            sma20_data.append({
+                'time': int(index.timestamp()),
+                'value': float(row['SMA_20'])
+            })
+    
+    # SMA50データ
+    sma50_data = []
+    if 'SMA_50' in df.columns:
+        for index, row in df.iterrows():
+            if not pd.isna(row.get('SMA_50')):
+                sma50_data.append({
+                    'time': int(index.timestamp()),
+                    'value': float(row['SMA_50'])
+                })
+    
+    import json
+    
+    html_code = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+        <style>
+            body {{ margin: 0; padding: 0; background: #0a0e27; }}
+            #chart {{ width: 100%; height: 600px; }}
+        </style>
+    </head>
+    <body>
+        <div id="chart"></div>
+        <script>
+            const chart = LightweightCharts.createChart(document.getElementById('chart'), {{
+                layout: {{
+                    background: {{ color: '#0a0e27' }},
+                    textColor: '#8b9dc3',
+                }},
+                grid: {{
+                    vertLines: {{ color: 'rgba(42, 46, 57, 0.5)' }},
+                    horzLines: {{ color: 'rgba(42, 46, 57, 0.5)' }},
+                }},
+                crosshair: {{
+                    mode: LightweightCharts.CrosshairMode.Normal,
+                }},
+                rightPriceScale: {{
+                    borderColor: 'rgba(197, 203, 206, 0.8)',
+                }},
+                timeScale: {{
+                    borderColor: 'rgba(197, 203, 206, 0.8)',
+                    timeVisible: true,
+                    secondsVisible: false,
+                }},
+                handleScroll: {{
+                    mouseWheel: true,
+                    pressedMouseMove: true,
+                    horzTouchDrag: true,
+                    vertTouchDrag: true,
+                }},
+                handleScale: {{
+                    axisPressedMouseMove: true,
+                    mouseWheel: true,
+                    pinch: true,
+                }},
+            }});
 
+            const candlestickSeries = chart.addCandlestickSeries({{
+                upColor: '#00aaff',
+                downColor: '#aa00ff',
+                borderUpColor: '#00aaff',
+                borderDownColor: '#aa00ff',
+                wickUpColor: '#00aaff',
+                wickDownColor: '#aa00ff',
+            }});
+
+            candlestickSeries.setData({json.dumps(candlestick_data)});
+
+            const sma20Series = chart.addLineSeries({{
+                color: '#00aaff',
+                lineWidth: 2,
+                title: 'SMA20',
+            }});
+            sma20Series.setData({json.dumps(sma20_data)});
+
+            {f'''
+            const sma50Series = chart.addLineSeries({{
+                color: '#0055ff',
+                lineWidth: 2,
+                title: 'SMA50',
+            }});
+            sma50Series.setData({json.dumps(sma50_data)});
+            ''' if sma50_data else ''}
+
+            // サポート・レジスタンスライン
+            candlestickSeries.createPriceLine({{
+                price: {support},
+                color: '#00ff88',
+                lineWidth: 1,
+                lineStyle: LightweightCharts.LineStyle.Dashed,
+                axisLabelVisible: true,
+                title: 'サポート',
+            }});
+
+            candlestickSeries.createPriceLine({{
+                price: {resistance},
+                color: '#ff0088',
+                lineWidth: 1,
+                lineStyle: LightweightCharts.LineStyle.Dashed,
+                axisLabelVisible: true,
+                title: 'レジスタンス',
+            }});
+
+            candlestickSeries.createPriceLine({{
+                price: {pivot},
+                color: '#ffaa00',
+                lineWidth: 1,
+                lineStyle: LightweightCharts.LineStyle.Dotted,
+                axisLabelVisible: true,
+                title: 'ピボット',
+            }});
+
+            chart.timeScale().fitContent();
+        </script>
+    </body>
+    </html>
+    """
+    
+    return html_code
+    
 @st.cache_data(ttl=60)
 def calculate_advanced_technicals(data):
     df = data.copy()
