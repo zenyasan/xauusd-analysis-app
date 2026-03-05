@@ -1297,9 +1297,10 @@ try:
     paper_bgcolor='rgba(10,14,39,0.8)',
     plot_bgcolor='rgba(10,14,39,0.5)',
     font=dict(family='Rajdhani', color='#8b9dc3'),
-    dragmode=False,
+    dragmode='pan',
     xaxis=dict(fixedrange=False),
-    yaxis=dict(fixedrange=False)
+    yaxis=dict(fixedrange=False),
+    hovermode='x unified'
     )
     
     fig.update_xaxes(
@@ -1309,12 +1310,18 @@ try:
     st.markdown("<br>" * 5, unsafe_allow_html=True)
     
     st.plotly_chart(fig, use_container_width=True, config={
-    'scrollZoom': True,
-    'displayModeBar': True,
-    'displaylogo': False,
-    'modeBarButtonsToRemove': ['zoom2d', 'pan2d', 'select2d', 'lasso2d'],
-    'doubleClick': 'reset',
-    'responsive': True
+        'scrollZoom': True,
+        'displayModeBar': True,
+        'displaylogo': False,
+        'doubleClick': 'reset',
+        'responsive': True,
+        'toImageButtonOptions': {
+            'format': 'png',
+            'filename': 'xauusd_chart',
+            'height': 600,
+            'width': 1200,
+            'scale': 1
+        }
     })
     
     st.caption(f"💡 価格表示について：先物価格（GC=F）から{GOLD_FUTURES_ADJUSTMENT:.0f}ドル補正してスポット価格相当を表示しています")
