@@ -929,6 +929,7 @@ def get_gold_data(period, interval):
     except Exception as e:
         st.error(f"データ取得エラー: {e}")
         return None
+        
 def create_lightweight_chart(df, current, support, resistance, pivot, r1, s1, selected_timeframe):
     """Lightweight Charts (TradingView) でチャートを生成"""
     
