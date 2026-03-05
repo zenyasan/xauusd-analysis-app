@@ -1312,7 +1312,7 @@ try:
     'scrollZoom': True,
     'displayModeBar': True,
     'displaylogo': False,
-    'modeBarButtonsToAdd': ['resetScale2d'],
+    'modeBarButtonsToRemove': ['zoom2d', 'pan2d', 'select2d', 'lasso2d'],
     'doubleClick': 'reset',
     'responsive': True
     })
