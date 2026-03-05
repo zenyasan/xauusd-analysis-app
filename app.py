@@ -1297,7 +1297,7 @@ try:
     paper_bgcolor='rgba(10,14,39,0.8)',
     plot_bgcolor='rgba(10,14,39,0.5)',
     font=dict(family='Rajdhani', color='#8b9dc3'),
-    dragmode='zoom',
+    dragmode=False,
     xaxis=dict(fixedrange=False),
     yaxis=dict(fixedrange=False)
     )
