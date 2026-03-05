@@ -377,7 +377,26 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def check_password():
+def check_password():
+    def password_entered():
+        if hashlib.sha256(st.session_state["password"].encode()).hexdigest() == "4e42de48f9cdf95d8cbf5ad17f11a63601120eb1cdaa35eae088bb75196e4a67":
+            st.session_state["password_correct"] = True
+        else:
+            st.session_state["password_correct"] = False
+    
+    if "password_correct" not in st.session_state:
+        st.markdown("# 🔒 XAUUSD分析アプリ")
+        st.text_input("パスワード", type="password", on_change=password_entered, key="password", autocomplete="current-password")
+        st.info("💡 パスワードを入力してください")
+        return False
+    elif not st.session_state["password_correct"]:
+        st.markdown("# 🔒 XAUUSD分析アプリ")
+        st.text_input("パスワード", type="password", on_change=password_entered, key="password", autocomplete="current-password")
+        st.error("❌ パスワードが違います")
+        return False
+    return True
 
+if not check_password():
 if not check_password():
     st.stop()
 
