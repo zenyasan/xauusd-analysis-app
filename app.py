@@ -1445,12 +1445,6 @@ try:
     
     fig.update_xaxes(
     tickformat='%m/%d<br>%H:%M',
-    fixedrange=False
-    )
-    
-    fig.update_yaxes(
-        fixedrange=False
-    )
 
     st.markdown("<br>" * 5, unsafe_allow_html=True)
     
