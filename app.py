@@ -1289,14 +1289,14 @@ try:
     fig.add_hline(y=pivot, line_dash="dot", line_color="#ffaa00", annotation_text="ピボット")
     
     fig.update_layout(
-        title=f'📈 XAUUSD {selected_timeframe}チャート (JST)',
-        height=600,
-        xaxis_rangeslider_visible=False,
-        xaxis_title='時刻 (JST)',
-        template='plotly_dark',
-        paper_bgcolor='rgba(10,14,39,0.8)',
-        plot_bgcolor='rgba(10,14,39,0.5)',
-        font=dict(family='Rajdhani', color='#8b9dc3')
+    title=f'📈 XAUUSD {selected_timeframe}チャート (JST)',
+    height=600,
+    xaxis_rangeslider_visible=False,
+    xaxis_title='時刻 (JST)',
+    template='plotly_dark',
+    paper_bgcolor='rgba(10,14,39,0.8)',
+    plot_bgcolor='rgba(10,14,39,0.5)',
+    font=dict(family='Rajdhani', color='#8b9dc3')
     )
     
     fig.update_xaxes(
