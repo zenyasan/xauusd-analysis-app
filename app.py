@@ -1448,7 +1448,13 @@ try:
 
     st.markdown("<br>" * 5, unsafe_allow_html=True)
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={
+    'scrollZoom': True,
+    'displayModeBar': True,
+    'displaylogo': False,
+    'modeBarButtonsToRemove': ['select2d', 'lasso2d'],
+    'doubleClick': 'reset'
+    })
     
     st.caption(f"💡 価格表示について：先物価格（GC=F）から{GOLD_FUTURES_ADJUSTMENT:.0f}ドル補正してスポット価格相当を表示しています")
     st.caption(f"⏰ チャート最終データ: {latest_data_time.strftime('%Y年%m月%d日 %H:%M')} JST（約{time_diff_minutes:.0f}分前）")
