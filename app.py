@@ -1006,13 +1006,13 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
             st.markdown('<div style="font-size: 0.7rem; color: #d0d0d0; padding: 0.2rem 0.5rem; margin-top: -0.3rem;">現在価格の変動率 - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い</div>', unsafe_allow_html=True)
         
         analysis2 = f"""
-- **RSI (7)**: {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}"""
+- RSI (7): {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}"""
         
         st.markdown(analysis2)
 
         st.markdown('<style>.stExpander .streamlit-expanderHeader {font-size: 0.3rem !important;}</style>', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown('<div style="font-size: 0.7rem; color: #d0d0d0; padding: 0.2rem 0.5rem; margin-top: -0.5rem;">**RSI (7)** - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断</div>', unsafe_allow_html=True)
+            st.markdown('<div style="font-size: 0.7rem; color: #d0d0d0; padding: 0.2rem 0.5rem; margin-top: -0.5rem;">RSI (7) - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断</div>', unsafe_allow_html=True)
         
         analysis3 = f"""
 - **MACD**: {macd_trend}"""
@@ -1092,13 +1092,13 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 
 ### 📈 市場環境分析
 
-- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
-- **RSI (7)**: {rsi:.1f}
-- **MACD**: {macd_trend}
-- **ATR**: {atr:.2f}
-- **ピボットポイント**: ${pivot:,.2f}
-- **レジスタンス**: R1=${r1:,.2f}
-- **サポート**: S1=${s1:,.2f}
+- 現在価格: ${current:,.2f} ({change_pct:+.2f}%)
+- RSI (7): {rsi:.1f}
+- MACD: {macd_trend}
+- ATR: {atr:.2f}
+- ピボットポイント: ${pivot:,.2f}
+- レジスタンス: R1=${r1:,.2f}
+- サポート: S1=${s1:,.2f}
 
 ### トレンド判定
 {"📈 **強い上昇トレンド** - ロング優勢" if change_pct > 0.5 and macd > macd_signal else "📉 **強い下落トレンド** - ショート優勢" if change_pct < -0.5 and macd < macd_signal else "➡️ **レンジ相場** - ブレイクアウト待ち"}
