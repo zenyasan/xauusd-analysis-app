@@ -1586,7 +1586,7 @@ try:
     st.plotly_chart(fig, use_container_width=True)
 
     # 更新ボタンをチャート直後に配置
-    col_update, col_space = st.columns([1, 2])
+    col_update, col_space = st.columns([0.3, 3.7])
     with col_update:
         if st.button("🔄 更新", key="refresh_chart"):
             st.cache_data.clear()
