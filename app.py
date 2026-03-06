@@ -1586,27 +1586,29 @@ try:
     st.plotly_chart(fig, use_container_width=True)
 
     # 更新ボタンをチャート直後に配置
+    st.markdown("""
+    <style>
+    button[data-testid="baseButton-secondary"] {
+        background: rgba(10, 14, 39, 0.8) !important;
+        border: 1px solid rgba(0, 170, 255, 0.4) !important;
+        color: #00aaff !important;
+        font-size: 0.65rem !important;
+        padding: 0.3rem 0.6rem !important;
+        border-radius: 8px !important;
+    }
+    button[data-testid="baseButton-secondary"]:hover {
+        background: rgba(0, 170, 255, 0.2) !important;
+        border-color: #00aaff !important;
+    }
+    button[data-testid="baseButton-secondary"] p {
+        font-size: 0.65rem !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     col_update, col_space = st.columns([1, 3])
     with col_update:
-        st.markdown("""
-        <style>
-        .custom-refresh-button {
-            background: linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(0, 85, 255, 0.2) 100%);
-            color: #0a0e27;
-            border: 1px solid #0a0e27;
-            border-radius: 8px;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.4rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            display: inline-block;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-        
-        refresh_clicked = st.button("🔄", key="refresh_chart", help="今すぐ更新")
-        if refresh_clicked:
+        if st.button("🔄 今すぐ更新", key="refresh_chart"):
             st.cache_data.clear()
             st.rerun()
 
