@@ -1980,8 +1980,23 @@ st.sidebar.info(f"""
 # 見出しの色を強制的に青にする（最優先）
 st.markdown("""
 <style>
-h2, h3, h4 {
+h2 {
     color: #00aaff !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom: 2px solid #00aaff !important;
+    margin-bottom: 1.5rem !important;
+}
+h3 {
+    color: #00aaff !important;
+    padding-bottom: 0.4rem !important;
+    border-bottom: 1px solid rgba(0, 170, 255, 0.5) !important;
+    margin-bottom: 0.8rem !important;
+}
+h4 {
+    color: #00aaff !important;
+    padding-bottom: 0.3rem !important;
+    border-bottom: 1px solid rgba(0, 170, 255, 0.3) !important;
+    margin-bottom: 0.6rem !important;
 }
 div[data-testid="stMarkdownContainer"] h2,
 div[data-testid="stMarkdownContainer"] h3,
@@ -2015,7 +2030,3 @@ div[data-testid="stMarkdownContainer"] p {
 }
 </style>
 """, unsafe_allow_html=True)
-
-if auto_refresh:
-    time.sleep(refresh_interval)
-    st.rerun()
