@@ -1589,7 +1589,7 @@ try:
     st.markdown("""
     <style>
     div[data-testid="column"]:first-child button {
-        height: 1.5rem !important;
+        height: 1.3rem !important;
         min-height: 1.8rem !important;
         padding-top: 0.1rem !important;
         padding-bottom: 0.1rem !important;
@@ -1601,7 +1601,7 @@ try:
     </style>
     """, unsafe_allow_html=True)
     
-    col_update, col_space = st.columns([0.5, 3.5])
+    col_update, col_space = st.columns([3.5, 5.5])
     with col_update:
         if st.button("🔄 更新", key="refresh_chart"):
             st.cache_data.clear()
