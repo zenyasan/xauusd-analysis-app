@@ -1586,43 +1586,9 @@ try:
     st.plotly_chart(fig, use_container_width=True)
 
     # 更新ボタンをチャート直後に配置
-    import streamlit.components.v1 as components
-    
     col_update, col_space = st.columns([1, 3])
     with col_update:
-        button_html = """
-        <style>
-        .refresh-btn {
-            background: linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(0, 85, 255, 0.2) 100%);
-            color: #00aaff;
-            border: 2px solid #00aaff;
-            border-radius: 12px;
-            padding: 0.5rem 1.5rem;
-            font-size: 0.7rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
-            text-align: center;
-            width: 100%;
-        }
-        .refresh-btn:hover {
-            background: linear-gradient(135deg, #00aaff 0%, #0055ff 100%);
-            color: #ffffff;
-            border-color: #ffffff;
-            box-shadow: 0 0 40px rgba(0, 170, 255, 0.8);
-            transform: translateY(-3px);
-        }
-        </style>
-        <button class="refresh-btn" onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*')">
-            🔄 今すぐ更新
-        </button>
-        """
-        
-        clicked = components.html(button_html, height=50)
-        
-        if clicked:
+        if st.button("🔄 更新", key="refresh_chart"):
             st.cache_data.clear()
             st.rerun()
 
