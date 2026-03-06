@@ -309,7 +309,7 @@ st.markdown("""
         margin-top: 2rem;
         padding-bottom: 0.5rem;
         border-bottom: 2px solid #00aaff;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
     }
     
     .stMarkdown h3 {
