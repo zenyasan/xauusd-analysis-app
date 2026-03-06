@@ -340,6 +340,20 @@ st.markdown("""
         border-bottom: 1px solid rgba(0, 170, 255, 0.3) !important;
         margin-bottom: 0.6rem !important;
     }
+    
+    /* 追加：見出し要素に直接適用 */
+    div[data-testid="stMarkdownContainer"] h2,
+    div[data-testid="stMarkdownContainer"] h3,
+    div[data-testid="stMarkdownContainer"] h4 {
+        color: #00aaff !important;
+    }
+    
+    /* さらに強力に */
+    [class*="st-emotion"] h2,
+    [class*="st-emotion"] h3,
+    [class*="st-emotion"] h4 {
+        color: #00aaff !important;
+    }
 
     /* 見出し全体に色を強制適用 */
     h2 {
