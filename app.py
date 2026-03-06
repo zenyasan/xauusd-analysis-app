@@ -1589,7 +1589,7 @@ try:
     st.markdown("""
     <style>
     div[data-testid="column"]:first-child button p {
-        font-size: 0.5rem !important;
+        font-size: 0.7rem !important;
     }
     </style>
     """, unsafe_allow_html=True)
