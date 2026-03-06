@@ -1587,7 +1587,6 @@ try:
 
     # 更新ボタンをチャート直後に配置
     col_update, col_space = st.columns([1, 3])
-    
     with col_update:
     if st.button("🔄 今すぐ更新", type="primary", use_container_width=False):
             st.cache_data.clear()
