@@ -1603,7 +1603,7 @@ try:
     
     col_update, col_space = st.columns([3.5, 5.5])
     with col_update:
-        if st.button("🔄 更新", key="refresh_chart"):
+        if st.button("更新", key="refresh_chart"):
             st.cache_data.clear()
             st.rerun()
 
