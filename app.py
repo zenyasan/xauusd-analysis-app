@@ -1589,9 +1589,9 @@ try:
     st.markdown("""
     <style>
     button[key="refresh_chart"] {
-        padding: 0.2rem 0.5rem !important;
-        font-size: 0.5rem !important;
-        min-height: 1.5rem !important;
+        padding: 0.18rem 0.4rem !important;
+        font-size: 0.4rem !important;
+        min-height: 1.3rem !important;
     }
     </style>
     """, unsafe_allow_html=True)
