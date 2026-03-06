@@ -1024,6 +1024,7 @@ def create_mobile_friendly_chart(df, current, support, resistance, pivot, select
                             borderColor: '#00ff88',
                             label: {{
                                 text: 'サポート',
+                                position: 'left',
                                 style: {{ color: '#fff', background: '#00ff88' }}
                             }}
                         }},
@@ -1032,6 +1033,7 @@ def create_mobile_friendly_chart(df, current, support, resistance, pivot, select
                             borderColor: '#ff0088',
                             label: {{
                                 text: 'レジスタンス',
+                                position: 'left',
                                 style: {{ color: '#fff', background: '#ff0088' }}
                             }}
                         }},
@@ -1040,12 +1042,12 @@ def create_mobile_friendly_chart(df, current, support, resistance, pivot, select
                             borderColor: '#ffaa00',
                             label: {{
                                 text: 'ピボット',
+                                position: 'left',
                                 style: {{ color: '#fff', background: '#ffaa00' }}
                             }}
                         }}
                     ]
                 }}
-            }};
             
             const chart = new ApexCharts(document.querySelector("#chart"), options);
             chart.render();
