@@ -218,7 +218,7 @@ st.markdown("""
 
     /* タブの余白調整 */
     [data-testid="stTabs"] {
-        margin-top: 2rem !important;
+        margin-top: 1.8rem !important;
     }
     
     div[data-baseweb="tab-list"] {
