@@ -361,7 +361,7 @@ st.markdown("""
     
     .stMarkdown ul {
         font-family: 'Rajdhani', sans-serif !important;
-        color: #8b9dc3 !important;
+        color: #00aaff !important;
     }
     
     .stMarkdown li::marker {
