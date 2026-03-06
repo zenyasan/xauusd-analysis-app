@@ -387,7 +387,7 @@ def check_password():
     
     # ログイン状態を保存するファイル
     login_file = "user_data/.login_session"
-    login_duration = 7 * 24 * 60 * 60  # 7日間（秒単位）
+    login_duration = 30 * 24 * 60 * 60  # 30日間（秒単位）
     
     def password_entered():
         if hashlib.sha256(st.session_state["password"].encode()).hexdigest() == "4e42de48f9cdf95d8cbf5ad17f11a63601120eb1cdaa35eae088bb75196e4a67":
