@@ -1581,7 +1581,7 @@ try:
     st.plotly_chart(fig, use_container_width=True)
 
     # 更新ボタンをチャート直後に配置
-    st.markdown('<style>.small-button button {font-size: 0.7rem !important; padding: 0.3rem 0.8rem !important;}</style>', unsafe_allow_html=True)
+    st.markdown('<style>.small-button button {font-size: 0.5rem !important; padding: 0.3rem 0.8rem !important;}</style>', unsafe_allow_html=True)
     col_update, col_space = st.columns([1, 3])
     with col_update:
         st.markdown('<div class="small-button">', unsafe_allow_html=True)
