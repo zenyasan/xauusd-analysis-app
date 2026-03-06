@@ -1571,13 +1571,10 @@ try:
 
     st.markdown("<br>" * 5, unsafe_allow_html=True)
     
-    st.plotly_chart(fig, use_container_width=True, config={
-    'scrollZoom': True,
-    'displayModeBar': True,
-    'displaylogo': False,
-    'modeBarButtonsToRemove': ['select2d', 'lasso2d'],
-    'doubleClick': 'reset'
-    })
+    # モバイル対応チャート
+    import streamlit.components.v1 as components
+    mobile_chart_html = create_mobile_friendly_chart(df, current, support, resistance, pivot, selected_timeframe)
+    components.html(mobile_chart_html, height=650, scrolling=False)
 
     # 更新ボタンをチャート直後に配置
     col_update, col_space = st.columns([1, 3])
