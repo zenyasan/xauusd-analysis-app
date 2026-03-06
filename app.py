@@ -315,30 +315,35 @@ st.markdown("""
     .stMarkdown h2 {
         font-family: 'Orbitron', monospace !important;
         color: #00aaff !important;
-        font-weight: 700;
-        margin-top: 2rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #00aaff;
-        margin-bottom: 1.5rem;
+        font-weight: 700 !important;
+        margin-top: 2rem !important;
+        padding-bottom: 0.5rem !important;
+        border-bottom: 2px solid #00aaff !important;
+        margin-bottom: 1.5rem !important;
     }
     
     .stMarkdown h3 {
         font-family: 'Rajdhani', sans-serif !important;
         color: #00aaff !important;
-        font-weight: 700;
-        text-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
-        padding-bottom: 0.4rem;
-        border-bottom: 1px solid rgba(0, 170, 255, 0.5);
-        margin-bottom: 0.8rem;
+        font-weight: 700 !important;
+        text-shadow: 0 0 10px rgba(0, 170, 255, 0.3) !important;
+        padding-bottom: 0.4rem !important;
+        border-bottom: 1px solid rgba(0, 170, 255, 0.5) !important;
+        margin-bottom: 0.8rem !important;
     }
     
     .stMarkdown h4 {
         font-family: 'Rajdhani', sans-serif !important;
         color: #00aaff !important;
-        font-weight: 600;
-        padding-bottom: 0.3rem;
-        border-bottom: 1px solid rgba(0, 170, 255, 0.3);
-        margin-bottom: 0.6rem;
+        font-weight: 600 !important;
+        padding-bottom: 0.3rem !important;
+        border-bottom: 1px solid rgba(0, 170, 255, 0.3) !important;
+        margin-bottom: 0.6rem !important;
+    }
+    
+    /* 絵文字付き見出しにも適用 */
+    h2, h3, h4 {
+        color: #00aaff !important;
     }
     
     .stMarkdown ul {
