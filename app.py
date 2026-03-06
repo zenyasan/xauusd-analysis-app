@@ -161,6 +161,11 @@ st.markdown("""
         box-shadow: 0 0 40px rgba(0, 170, 255, 0.8), 0 0 60px rgba(0, 85, 255, 0.5);
         transform: translateY(-3px) scale(1.05);
     }
+
+        button[kind="primary"] {
+        font-size: 0.6rem !important;
+        padding: 0.3rem 0.8rem !important;
+    }
     
     [data-testid="stSidebar"] {
         background: linear-gradient(180deg, #0a0e27 0%, #1a1d3a 100%);
