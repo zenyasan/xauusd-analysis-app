@@ -341,7 +341,7 @@ st.markdown("""
         margin-bottom: 0.6rem !important;
     }
 
-        /* 見出し全体に色を強制適用 */
+    /* 見出し全体に色を強制適用 */
     h2 {
         color: #00aaff !important;
     }
