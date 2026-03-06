@@ -1732,10 +1732,6 @@ try:
     
     st.markdown("---")
     st.caption(f"⏰ 最終更新: {now_jst.strftime('%Y年%m月%d日 %H:%M:%S')} JST")
-    
-    if st.button("🔄 今すぐ更新", use_container_width=True):
-        st.cache_data.clear()
-        st.rerun()
 
 except Exception as e:
     st.error(f"❌ エラーが発生しました: {e}")
