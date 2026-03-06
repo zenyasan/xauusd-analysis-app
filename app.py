@@ -1586,6 +1586,16 @@ try:
     st.plotly_chart(fig, use_container_width=True)
 
     # 更新ボタンをチャート直後に配置
+    st.markdown("""
+    <style>
+    button[key="refresh_chart"] {
+        padding: 0.2rem 0.5rem !important;
+        font-size: 0.7rem !important;
+        min-height: 2rem !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     col_update, col_space = st.columns([1, 3])
     with col_update:
         if st.button("🔄 更新", key="refresh_chart"):
