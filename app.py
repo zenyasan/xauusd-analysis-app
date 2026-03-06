@@ -1017,37 +1017,37 @@ def create_mobile_friendly_chart(df, current, support, resistance, pivot, select
                 grid: {{
                     borderColor: '#2a2e39'
                 }},
-                annotations: {{
-                    yaxis: [
-                        {{
-                            y: {support},
-                            borderColor: '#00ff88',
-                            label: {{
-                                text: 'サポート',
-                                position: 'left',
-                                style: {{ color: '#fff', background: '#00ff88' }}
+                    annotations: {{
+                        yaxis: [
+                            {{
+                                y: {support},
+                                borderColor: '#00ff88',
+                                label: {{
+                                    text: 'サポート',
+                                    position: 'left',
+                                    style: {{ color: '#fff', background: '#00ff88' }}
+                                }}
+                            }},
+                            {{
+                                y: {resistance},
+                                borderColor: '#ff0088',
+                                label: {{
+                                    text: 'レジスタンス',
+                                    position: 'left',
+                                    style: {{ color: '#fff', background: '#ff0088' }}
+                                }}
+                            }},
+                            {{
+                                y: {pivot},
+                                borderColor: '#ffaa00',
+                                label: {{
+                                    text: 'ピボット',
+                                    position: 'left',
+                                    style: {{ color: '#fff', background: '#ffaa00' }}
+                                }}
                             }}
-                        }},
-                        {{
-                            y: {resistance},
-                            borderColor: '#ff0088',
-                            label: {{
-                                text: 'レジスタンス',
-                                position: 'left',
-                                style: {{ color: '#fff', background: '#ff0088' }}
-                            }}
-                        }},
-                        {{
-                            y: {pivot},
-                            borderColor: '#ffaa00',
-                            label: {{
-                                text: 'ピボット',
-                                position: 'left',
-                                style: {{ color: '#fff', background: '#ffaa00' }}
-                            }}
-                        }}
-                    ]
-                }}
+                        ]
+                    }}
             
             const chart = new ApexCharts(document.querySelector("#chart"), options);
             chart.render();
