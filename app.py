@@ -163,7 +163,7 @@ st.markdown("""
     }
 
         button[kind="primary"] {
-        font-size: 0.4rem !important;
+        font-size: 0.6rem !important;
         padding: 0.3rem 0.8rem !important;
     }
     
