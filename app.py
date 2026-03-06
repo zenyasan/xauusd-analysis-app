@@ -1977,24 +1977,24 @@ st.sidebar.info(f"""
 記録: {len(st.session_state.trade_history)}件
 """)
 
-    # 見出しの色を強制的に青にする（最優先）
-    st.markdown("""
-    <style>
-    h2, h3, h4 {
-        color: #00aaff !important;
-    }
-    div[data-testid="stMarkdownContainer"] h2,
-    div[data-testid="stMarkdownContainer"] h3,
-    div[data-testid="stMarkdownContainer"] h4 {
-        color: #00aaff !important;
-    }
-    [class*="st-emotion"] h2,
-    [class*="st-emotion"] h3,
-    [class*="st-emotion"] h4 {
-        color: #00aaff !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+# 見出しの色を強制的に青にする（最優先）
+st.markdown("""
+<style>
+h2, h3, h4 {
+    color: #00aaff !important;
+}
+div[data-testid="stMarkdownContainer"] h2,
+div[data-testid="stMarkdownContainer"] h3,
+div[data-testid="stMarkdownContainer"] h4 {
+    color: #00aaff !important;
+}
+[class*="st-emotion"] h2,
+[class*="st-emotion"] h3,
+[class*="st-emotion"] h4 {
+    color: #00aaff !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 if auto_refresh:
     time.sleep(refresh_interval)
