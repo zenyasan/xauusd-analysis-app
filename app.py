@@ -1008,7 +1008,10 @@ def create_mobile_friendly_chart(df, current, support, resistance, pivot, select
                 yaxis: {{
                     tooltip: {{ enabled: true }},
                     labels: {{
-                        style: {{ colors: '#8b9dc3' }}
+                        style: {{ colors: '#8b9dc3' }},
+                        formatter: function(value) {{
+                            return value.toFixed(2);
+                        }}
                     }}
                 }},
                 grid: {{
