@@ -1017,6 +1017,7 @@ def create_mobile_friendly_chart(df, current, support, resistance, pivot, select
                 grid: {{
                     borderColor: '#2a2e39'
                 }},
+                
                     annotations: {{
                         yaxis: [
                             {{
