@@ -1456,7 +1456,13 @@ try:
     'modeBarButtonsToRemove': ['select2d', 'lasso2d'],
     'doubleClick': 'reset'
     })
-    
+
+    # 更新ボタンをチャート直後に配置
+    col_update, col_space = st.columns([1, 3])
+    with col_update:
+        if st.button("🔄 今すぐ更新"):
+            st.cache_data.clear()
+            st.rerun()
     st.caption(f"💡 価格表示について：先物価格（GC=F）から{GOLD_FUTURES_ADJUSTMENT:.0f}ドル補正してスポット価格相当を表示しています")
     st.caption(f"⏰ チャート最終データ: {latest_data_time.strftime('%Y年%m月%d日 %H:%M')} JST（約{time_diff_minutes:.0f}分前）")
     
