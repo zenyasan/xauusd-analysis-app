@@ -1438,8 +1438,8 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 """
         st.markdown(analysis6, unsafe_allow_html=True)
     
-elif style == "デイトレード":
-    analysis = f"""
+    elif style == "デイトレード":
+        analysis = f"""
 ## 📊 デイトレード分析（{timeframe}）
 
 ### トレンド判定
