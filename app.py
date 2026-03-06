@@ -1588,20 +1588,8 @@ try:
     # 更新ボタンをチャート直後に配置
     st.markdown("""
     <style>
-    button[data-testid="baseButton-secondary"] {
-        background: rgba(10, 14, 39, 0.8) !important;
-        border: 1px solid rgba(0, 170, 255, 0.4) !important;
-        color: #00aaff !important;
-        font-size: 0.4rem !important;
-        padding: 0.3rem 0.6rem !important;
-        border-radius: 8px !important;
-    }
-    button[data-testid="baseButton-secondary"]:hover {
-        background: rgba(0, 170, 255, 0.2) !important;
-        border-color: #00aaff !important;
-    }
-    button[data-testid="baseButton-secondary"] p {
-        font-size: 0.4rem !important;
+    div[data-testid="column"]:first-child button p {
+        font-size: 0.5rem !important;
     }
     </style>
     """, unsafe_allow_html=True)
