@@ -1592,7 +1592,7 @@ try:
         background: rgba(10, 14, 39, 0.8) !important;
         border: 1px solid rgba(0, 170, 255, 0.4) !important;
         color: #00aaff !important;
-        font-size: 0.65rem !important;
+        font-size: 0.4rem !important;
         padding: 0.3rem 0.6rem !important;
         border-radius: 8px !important;
     }
