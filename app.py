@@ -340,6 +340,19 @@ st.markdown("""
         border-bottom: 1px solid rgba(0, 170, 255, 0.3) !important;
         margin-bottom: 0.6rem !important;
     }
+
+        /* 見出し全体に色を強制適用 */
+    h2 {
+        color: #00aaff !important;
+    }
+    
+    h3 {
+        color: #00aaff !important;
+    }
+    
+    h4 {
+        color: #00aaff !important;
+    }
     
     /* 絵文字付き見出しにも適用 */
     h2, h3, h4 {
