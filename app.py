@@ -1977,10 +1977,6 @@ st.sidebar.info(f"""
 記録: {len(st.session_state.trade_history)}件
 """)
 
-if auto_refresh:
-    time.sleep(refresh_interval)
-    st.rerun()
-
     # 見出しの色を強制的に青にする（最優先）
     st.markdown("""
     <style>
@@ -1999,3 +1995,7 @@ if auto_refresh:
     }
     </style>
     """, unsafe_allow_html=True)
+
+if auto_refresh:
+    time.sleep(refresh_interval)
+    st.rerun()
