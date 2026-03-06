@@ -261,10 +261,12 @@ st.markdown("""
         font-size: 0.1rem !important;
         background: transparent !important;
         color: #ff0000 !important;
-        padding: 0.2rem 0.4rem !important;
+        padding: 0.05rem 0.4rem !important;
         font-weight: 600 !important;
         margin-top: 0 !important;
         margin-bottom: 0rem !important;
+        min-height: 1rem !important;
+        height: 1rem !important;
     }
 
     div[data-testid="stExpander"] summary {
