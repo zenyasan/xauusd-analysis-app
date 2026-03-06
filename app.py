@@ -1586,14 +1586,12 @@ try:
     st.plotly_chart(fig, use_container_width=True)
 
     # 更新ボタンをチャート直後に配置
-    st.markdown('<style>.small-button button {font-size: 0.5rem !important; padding: 0.3rem 0.8rem !important;}</style>', unsafe_allow_html=True)
     col_update, col_space = st.columns([1, 3])
     with col_update:
-        st.markdown('<div class="small-button">', unsafe_allow_html=True)
-        if st.button("🔄 今すぐ更新"):
+    if st.button("🔄 今すぐ更新", type="primary", use_container_width=False):
             st.cache_data.clear()
             st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+
     st.caption(f"💡 価格表示について：先物価格（GC=F）から{GOLD_FUTURES_ADJUSTMENT:.0f}ドル補正してスポット価格相当を表示しています")
     st.caption(f"⏰ チャート最終データ: {latest_data_time.strftime('%Y年%m月%d日 %H:%M')} JST（約{time_diff_minutes:.0f}分前）")
     
