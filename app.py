@@ -929,7 +929,129 @@ def get_gold_data(period, interval):
     except Exception as e:
         st.error(f"データ取得エラー: {e}")
         return None
-        
+
+def create_mobile_friendly_chart(df, current, support, resistance, pivot, selected_timeframe):
+    """モバイル完全対応のシンプルチャート"""
+    import json
+    
+    # ローソク足データ
+    candles = []
+    for idx, row in df.iterrows():
+        candles.append({
+            'time': idx.strftime('%Y-%m-%d %H:%M'),
+            'open': float(row['Open']),
+            'high': float(row['High']),
+            'low': float(row['Low']),
+            'close': float(row['Close'])
+        })
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{ background: #0a0e27; touch-action: pan-x pan-y; }}
+            #chart {{ width: 100%; height: 600px; }}
+        </style>
+    </head>
+    <body>
+        <div id="chart"></div>
+        <script>
+            const candleData = {json.dumps(candles)};
+            
+            const options = {{
+                series: [{{
+                    name: 'XAUUSD',
+                    data: candleData.map(c => ({{
+                        x: new Date(c.time),
+                        y: [c.open, c.high, c.low, c.close]
+                    }}))
+                }}],
+                chart: {{
+                    type: 'candlestick',
+                    height: 600,
+                    background: '#0a0e27',
+                    foreColor: '#8b9dc3',
+                    zoom: {{
+                        enabled: true,
+                        type: 'x',
+                        autoScaleYaxis: true
+                    }},
+                    toolbar: {{
+                        show: true,
+                        tools: {{
+                            zoom: true,
+                            zoomin: true,
+                            zoomout: true,
+                            pan: true,
+                            reset: true
+                        }}
+                    }}
+                }},
+                plotOptions: {{
+                    candlestick: {{
+                        colors: {{
+                            upward: '#00aaff',
+                            downward: '#aa00ff'
+                        }}
+                    }}
+                }},
+                xaxis: {{
+                    type: 'datetime',
+                    labels: {{
+                        style: {{ colors: '#8b9dc3' }}
+                    }}
+                }},
+                yaxis: {{
+                    tooltip: {{ enabled: true }},
+                    labels: {{
+                        style: {{ colors: '#8b9dc3' }}
+                    }}
+                }},
+                grid: {{
+                    borderColor: '#2a2e39'
+                }},
+                annotations: {{
+                    yaxis: [
+                        {{
+                            y: {support},
+                            borderColor: '#00ff88',
+                            label: {{
+                                text: 'サポート',
+                                style: {{ color: '#fff', background: '#00ff88' }}
+                            }}
+                        }},
+                        {{
+                            y: {resistance},
+                            borderColor: '#ff0088',
+                            label: {{
+                                text: 'レジスタンス',
+                                style: {{ color: '#fff', background: '#ff0088' }}
+                            }}
+                        }},
+                        {{
+                            y: {pivot},
+                            borderColor: '#ffaa00',
+                            label: {{
+                                text: 'ピボット',
+                                style: {{ color: '#fff', background: '#ffaa00' }}
+                            }}
+                        }}
+                    ]
+                }}
+            }};
+            
+            const chart = new ApexCharts(document.querySelector("#chart"), options);
+            chart.render();
+        </script>
+    </body>
+    </html>
+    """
+    return html
+
 def create_lightweight_chart(df, current, support, resistance, pivot, r1, s1, selected_timeframe):
     """Lightweight Charts (TradingView) でチャートを生成"""
     
