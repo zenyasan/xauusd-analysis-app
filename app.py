@@ -1438,9 +1438,12 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 """
         st.markdown(analysis6, unsafe_allow_html=True)
     
-    elif style == "デイトレード":
-        analysis = f"""
+elif style == "デイトレード":
+    analysis = f"""
 ## 📊 デイトレード分析（{timeframe}）
+
+### トレンド判定
+{"📈 **強い上昇トレンド** - ロング優勢" if change_pct > 0.5 and macd > macd_signal else "📉 **強い下落トレンド** - ショート優勢" if change_pct < -0.5 and macd < macd_signal else "➡️ **レンジ相場** - ブレイクアウト待ち"}
 
 ### 📈 市場環境分析
 
@@ -1451,9 +1454,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - ピボットポイント: ${pivot:,.2f}
 - レジスタンス: R1=${r1:,.2f}
 - サポート: S1=${s1:,.2f}
-
-### トレンド判定
-{"📈 **強い上昇トレンド** - ロング優勢" if change_pct > 0.5 and macd > macd_signal else "📉 **強い下落トレンド** - ショート優勢" if change_pct < -0.5 and macd < macd_signal else "➡️ **レンジ相場** - ブレイクアウト待ち"}
 
 ### 🎯 精密トレード戦略
 
