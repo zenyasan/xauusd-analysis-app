@@ -1355,7 +1355,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 
         st.markdown('<style>div[data-testid="stExpander"] {margin-top: -2.2rem !important;} .stExpander .streamlit-expanderHeader {font-size: 0.4rem !important;}</style>', unsafe_allow_html=True)
         with st.expander("ℹ️ 用語解説", expanded=False):
-            st.markdown('<div style="font-size: 0.6rem; color: #d0d0d0; padding: 0.18rem 0.5rem; margin-top: -1.5rem;">現在価格の変動率 - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い</div>', unsafe_allow_html=True)
+            st.markdown('<div style="font-size: 0.6rem; color: #d0d0d0; padding: 0.15rem 0.5rem; margin-top: -1.5rem;">現在価格の変動率 - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い</div>', unsafe_allow_html=True)
         
         analysis2 = f"""
 - RSI (7): {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}"""
