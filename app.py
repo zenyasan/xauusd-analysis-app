@@ -1601,7 +1601,7 @@ try:
         border-color: #00aaff !important;
     }
     button[data-testid="baseButton-secondary"] p {
-        font-size: 0.65rem !important;
+        font-size: 0.4rem !important;
     }
     </style>
     """, unsafe_allow_html=True)
