@@ -1588,7 +1588,7 @@ try:
     # 更新ボタンをチャート直後に配置
     col_update, col_space = st.columns([1, 3])
     with col_update:
-        st.markdown('<style>div[data-testid="column"] button[kind="primary"] p {font-size: 0.5rem !important;}</style>', unsafe_allow_html=True)
+        st.markdown('<style>div[data-testid="column"] button[kind="primary"] p {font-size: 0.3rem !important;}</style>', unsafe_allow_html=True)
         if st.button("🔄 今すぐ更新", type="primary", use_container_width=False):
             st.cache_data.clear()
             st.rerun()
