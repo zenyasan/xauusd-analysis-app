@@ -215,6 +215,19 @@ st.markdown("""
         font-family: 'Rajdhani', sans-serif !important;
         font-weight: 600;
     }
+
+    /* タブの余白調整 */
+    [data-testid="stTabs"] {
+        margin-top: 2rem !important;
+    }
+    
+    div[data-baseweb="tab-list"] {
+        margin-top: 1rem !important;
+    }
+    
+    hr {
+        border: none;
+        height: 2px;
     
     hr {
         border: none;
