@@ -1590,13 +1590,13 @@ try:
     <style>
     div[data-testid="column"]:first-child button {
         height: 1.3rem !important;
-        min-height: 1.8rem !important;
+        min-height: 1.5rem !important;
         padding-top: 0.1rem !important;
         padding-bottom: 0.1rem !important;
     }
     div[data-testid="column"]:first-child button p {
-        font-size: 0.7rem !important;
-        line-height: 1.2 !important;
+        font-size: 0.5rem !important;
+        line-height: 1.0 !important;
     }
     </style>
     """, unsafe_allow_html=True)
