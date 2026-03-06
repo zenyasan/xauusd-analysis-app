@@ -307,6 +307,9 @@ st.markdown("""
         background-clip: text;
         font-weight: 700;
         margin-top: 2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #00aaff;
+        margin-bottom: 1rem;
     }
     
     .stMarkdown h3 {
@@ -314,12 +317,18 @@ st.markdown("""
         color: #00aaff !important;
         font-weight: 700;
         text-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid rgba(0, 170, 255, 0.5);
+        margin-bottom: 0.8rem;
     }
     
     .stMarkdown h4 {
         font-family: 'Rajdhani', sans-serif !important;
         color: #8b9dc3 !important;
         font-weight: 600;
+        padding-bottom: 0.3rem;
+        border-bottom: 1px solid rgba(0, 170, 255, 0.3);
+        margin-bottom: 0.6rem;
     }
     
     .stMarkdown ul {
