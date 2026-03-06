@@ -1993,6 +1993,26 @@ div[data-testid="stMarkdownContainer"] h4 {
 [class*="st-emotion"] h4 {
     color: #00aaff !important;
 }
+
+/* 箇条書きと説明文を明るくする */
+.stMarkdown li {
+    color: #c0d8ff !important;
+}
+.stMarkdown ul li {
+    color: #c0d8ff !important;
+}
+div[data-testid="stMarkdownContainer"] li {
+    color: #c0d8ff !important;
+}
+div[data-testid="stMarkdownContainer"] p {
+    color: #c0d8ff !important;
+}
+[class*="st-emotion"] li {
+    color: #c0d8ff !important;
+}
+[class*="st-emotion"] p {
+    color: #c0d8ff !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
