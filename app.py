@@ -1593,10 +1593,10 @@ try:
         .custom-refresh-button {
             background: linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(0, 85, 255, 0.2) 100%);
             color: #0a0e27;
-            border: 1px solid #00aaff;
+            border: 1px solid #0a0e27;
             border-radius: 8px;
             padding: 0.2rem 0.5rem;
-            font-size: 0.6rem;
+            font-size: 0.4rem;
             font-weight: 600;
             cursor: pointer;
             text-align: center;
