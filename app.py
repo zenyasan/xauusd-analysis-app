@@ -1590,8 +1590,8 @@ try:
     <style>
     button[key="refresh_chart"] {
         padding: 0.2rem 0.5rem !important;
-        font-size: 0.7rem !important;
-        min-height: 2rem !important;
+        font-size: 0.5rem !important;
+        min-height: 1.5rem !important;
     }
     </style>
     """, unsafe_allow_html=True)
