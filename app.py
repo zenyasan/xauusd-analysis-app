@@ -382,20 +382,44 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def check_password():
+    import os
+    import time
+    
+    # ログイン状態を保存するファイル
+    login_file = "user_data/.login_session"
+    login_duration = 7 * 24 * 60 * 60  # 7日間（秒単位）
+    
     def password_entered():
         if hashlib.sha256(st.session_state["password"].encode()).hexdigest() == "4e42de48f9cdf95d8cbf5ad17f11a63601120eb1cdaa35eae088bb75196e4a67":
             st.session_state["password_correct"] = True
+            # ログイン状態を保存
+            os.makedirs("user_data", exist_ok=True)
+            with open(login_file, "w") as f:
+                f.write(str(time.time()))
         else:
             st.session_state["password_correct"] = False
     
+    # 保存されたログイン状態をチェック
+    if os.path.exists(login_file):
+        try:
+            with open(login_file, "r") as f:
+                login_time = float(f.read())
+            
+            # ログインから7日以内なら自動ログイン
+            if time.time() - login_time < login_duration:
+                st.session_state["password_correct"] = True
+                return True
+        except:
+            pass
+    
     if "password_correct" not in st.session_state:
         st.markdown("# 🔒 XAUUSD分析アプリ")
-        st.text_input("パスワード", type="password", on_change=password_entered, key="password", autocomplete="current-password")
-        st.info("💡 パスワードを入力してください")
+        st.text_input("パスワード", type="password", on_change=password_entered, key="password")
+        st.info("💡 パスワードを入力してください（7日間ログイン状態を保持します）")
         return False
     elif not st.session_state["password_correct"]:
         st.markdown("# 🔒 XAUUSD分析アプリ")
-        st.text_input("パスワード", type="password", on_change=password_entered, key="password", autocomplete="current-password")
+        st.text_input("パスワード", type="password", on_change=password_entered, key="password")
         st.error("❌ パスワードが違います")
         return False
     return True
