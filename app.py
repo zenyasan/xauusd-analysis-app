@@ -314,10 +314,7 @@ st.markdown("""
     
     .stMarkdown h2 {
         font-family: 'Orbitron', monospace !important;
-        background: linear-gradient(90deg, #00aaff 0%, #0055ff 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: #00aaff !important;
         font-weight: 700;
         margin-top: 2rem;
         padding-bottom: 0.5rem;
@@ -337,7 +334,7 @@ st.markdown("""
     
     .stMarkdown h4 {
         font-family: 'Rajdhani', sans-serif !important;
-        color: #8b9dc3 !important;
+        color: #00aaff !important;
         font-weight: 600;
         padding-bottom: 0.3rem;
         border-bottom: 1px solid rgba(0, 170, 255, 0.3);
