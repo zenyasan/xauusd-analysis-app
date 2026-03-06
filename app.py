@@ -1578,9 +1578,7 @@ try:
     st.markdown("<br>" * 5, unsafe_allow_html=True)
     
     # モバイル対応チャート
-    import streamlit.components.v1 as components
-    mobile_chart_html = create_mobile_friendly_chart(df, current, support, resistance, pivot, selected_timeframe)
-    components.html(mobile_chart_html, height=650, scrolling=False)
+    st.plotly_chart(fig, use_container_width=True)
 
     # 更新ボタンをチャート直後に配置
     col_update, col_space = st.columns([1, 3])
