@@ -1494,7 +1494,6 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - ATRが{atr:.2f}なので、{"ボラティリティ高め、損切り幅を拡大" if atr > 15 else "ボラティリティ通常、標準的戦略で"}
 - ポジションは必ず当日中に決済
 """
-        
         st.markdown(analysis)
     
     else:
