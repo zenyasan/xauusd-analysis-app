@@ -1588,8 +1588,25 @@ try:
     # 更新ボタンをチャート直後に配置
     col_update, col_space = st.columns([1, 3])
     with col_update:
-        st.markdown('<style>div[data-testid="column"] button[kind="primary"] p {font-size: 0.3rem !important;}</style>', unsafe_allow_html=True)
-        if st.button("🔄 今すぐ更新", type="primary", use_container_width=False):
+        st.markdown("""
+        <style>
+        .custom-refresh-button {
+            background: linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(0, 85, 255, 0.2) 100%);
+            color: #00aaff;
+            border: 1px solid #00aaff;
+            border-radius: 8px;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.6rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            display: inline-block;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        refresh_clicked = st.button("🔄", key="refresh_chart", help="今すぐ更新")
+        if refresh_clicked:
             st.cache_data.clear()
             st.rerun()
 
