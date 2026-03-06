@@ -1497,8 +1497,8 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         
     st.markdown(analysis)
     
-else:
-    analysis = f"""
+            else:
+            analysis = f"""
 ## 📈 スイングトレード分析（{timeframe}）
 
 ### 🌍 マクロ環境
