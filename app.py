@@ -1437,7 +1437,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         # 5. ピボットの用語解説
         st.markdown("""
         <details>
-            <summary style="font-size: 0.7rem; color: #ee4400; cursor: pointer; list-style: none;">ⓘ 用語解説</summary>
+            <summary style="font-size: 0.7rem; color: #cc6600; cursor: pointer; list-style: none;">ⓘ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #00aaff; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
                 <strong>ピボットポイント</strong> - 前日の高値・安値・終値から計算される基準価格。トレーダーが注目するポイント / S1（サポート1）: 第1サポートライン（下値支持） / R1（レジスタンス1）: 第1レジスタンスライン（上値抵抗）
             </div>
