@@ -1364,57 +1364,87 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
     rr_long = (targets['long']['tp2'] - targets['long']['entry']) / (targets['long']['entry'] - targets['long']['sl']) if (targets['long']['entry'] - targets['long']['sl']) != 0 else 0
     rr_short = (targets['short']['entry'] - targets['short']['tp2']) / (targets['short']['sl'] - targets['short']['entry']) if (targets['short']['sl'] - targets['short']['entry']) != 0 else 0
     
-    if style == "スキャルピング":
-        analysis = f"""
+if style == "スキャルピング":
+    analysis = f"""
 ## 💨 スキャルピング分析（{timeframe}）
 
 ### 📊 テクニカル状況
 
 - **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
 """
-        st.markdown(analysis)
-        
-        st.markdown('<style>div[data-testid="stToggle"] label {font-size: 0.7rem !important;}</style>', unsafe_allow_html=True)
-        if st.toggle("ℹ️ 用語解説", value=False, key="toggle_price"):
-            st.markdown('<div style="font-size: 0.7rem; color: #00aaff;">**現在価格の変動率** - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い</div>', unsafe_allow_html=True)
-                
-        analysis2 = f"""
+    st.markdown(analysis)
+    
+    # 1. 現在価格の用語解説
+    st.markdown("""
+    <details>
+        <summary style="font-size: 0.7rem; color: #00aaff; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
+        <div style="font-size: 0.7rem; color: #00aaff; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
+            <strong>現在価格の変動率</strong> - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い
+        </div>
+    </details>
+    """, unsafe_allow_html=True)
+    
+    analysis2 = f"""
 - RSI (7): {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}
 """
-        st.markdown(analysis2)
-        
-        st.markdown('<style>div[data-testid="stToggle"] label {font-size: 0.7rem !important;}</style>', unsafe_allow_html=True)
-        if st.toggle("ℹ️ 用語解説", value=False, key="toggle_rsi"):
-            st.markdown('<div style="font-size: 0.7rem; color: #00aaff;">**RSI (7)** - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断</div>', unsafe_allow_html=True)
-       
-        analysis3 = f"""
+    st.markdown(analysis2)
+    
+    # 2. RSIの用語解説
+    st.markdown("""
+    <details>
+        <summary style="font-size: 0.7rem; color: #00aaff; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
+        <div style="font-size: 0.7rem; color: #00aaff; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
+            <strong>RSI (7)</strong> - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断
+        </div>
+    </details>
+    """, unsafe_allow_html=True)
+    
+    analysis3 = f"""
 - MACD: {macd_trend}
 """
-        st.markdown(analysis3)
-        
-        st.markdown('<style>div[data-testid="stToggle"] label {font-size: 0.7rem !important;}</style>', unsafe_allow_html=True)
-        if st.toggle("ℹ️ 用語解説", value=False, key="toggle_macd"):
-            st.markdown('<div style="font-size: 0.7rem; color: #00aaff;">**MACD** - 🟢 買いシグナル: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり / 🔴 売りシグナル: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり</div>', unsafe_allow_html=True)
-       
-        analysis4 = f"""
+    st.markdown(analysis3)
+    
+    # 3. MACDの用語解説
+    st.markdown("""
+    <details>
+        <summary style="font-size: 0.7rem; color: #00aaff; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
+        <div style="font-size: 0.7rem; color: #00aaff; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
+            <strong>MACD</strong> - 🟢 買いシグナル: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり / 🔴 売りシグナル: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり
+        </div>
+    </details>
+    """, unsafe_allow_html=True)
+    
+    analysis4 = f"""
 - ATR: {atr:.2f}（ボラティリティ指標）
 """
-        st.markdown(analysis4)
-        
-        st.markdown('<style>div[data-testid="stToggle"] label {font-size: 0.7rem !important;}</style>', unsafe_allow_html=True)
-        if st.toggle("ℹ️ 用語解説", value=False, key="toggle_atr"):
-            st.markdown('<div style="font-size: 0.7rem; color: #00aaff;">**ATR（ボラティリティ指標）** - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応</div>', unsafe_allow_html=True)
-       
-        analysis5 = f"""
+    st.markdown(analysis4)
+    
+    # 4. ATRの用語解説
+    st.markdown("""
+    <details>
+        <summary style="font-size: 0.7rem; color: #00aaff; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
+        <div style="font-size: 0.7rem; color: #00aaff; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
+            <strong>ATR（ボラティリティ指標）</strong> - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応
+        </div>
+    </details>
+    """, unsafe_allow_html=True)
+    
+    analysis5 = f"""
 - ピボット: ${pivot:,.2f}
 """
-        st.markdown(analysis5)
-        
-        st.markdown('<style>div[data-testid="stToggle"] label {font-size: 0.7rem !important;}</style>', unsafe_allow_html=True)
-        if st.toggle("ℹ️ 用語解説", value=False, key="toggle_pivot"):
-            st.markdown('<div style="font-size: 0.7rem; color: #00aaff;">**ピボットポイント** - 前日の高値・安値・終値から計算される基準価格。トレーダーが注目するポイント / S1（サポート1）: 第1サポートライン（下値支持） / R1（レジスタンス1）: 第1レジスタンスライン（上値抵抗）</div>', unsafe_allow_html=True)
+    st.markdown(analysis5)
     
-        analysis6 = f"""
+    # 5. ピボットの用語解説
+    st.markdown("""
+    <details>
+        <summary style="font-size: 0.7rem; color: #00aaff; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
+        <div style="font-size: 0.7rem; color: #00aaff; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
+            <strong>ピボットポイント</strong> - 前日の高値・安値・終値から計算される基準価格。トレーダーが注目するポイント / S1（サポート1）: 第1サポートライン（下値支持） / R1（レジスタンス1）: 第1レジスタンスライン（上値抵抗）
+        </div>
+    </details>
+    """, unsafe_allow_html=True)
+    
+    analysis6 = f"""
 ### 🎯 高精度エントリー戦略
 
 #### 🟢 ロングの場合
@@ -1457,7 +1487,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - **ATRが平均の1.5倍以上の時は見送り**
 <small class="note-text">→ 通常ATRが10-15の場合、22以上なら見送り。ボラティリティが高すぎて損切りに引っかかりやすい</small>
 """
-        st.markdown(analysis6, unsafe_allow_html=True)
+    st.markdown(analysis6, unsafe_allow_html=True)
     
     elif style == "デイトレード":
         analysis = f"""
