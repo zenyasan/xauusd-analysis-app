@@ -424,12 +424,31 @@ st.markdown("""
         color: #00aaff !important;
     }
     
-    .note-text {
+.note-text {
         color: #8b9dc3;
         font-size: 0.75rem;
         margin-left: 1rem;
         margin-top: 0.2rem;
         display: block;
+    }
+    
+    /* 用語解説のトグルボタンとテキストを小さく */
+    [data-testid="stToggle"] label {
+        font-size: 0.75rem !important;
+    }
+    
+    [data-testid="stToggle"] label p {
+        font-size: 0.75rem !important;
+    }
+    
+    /* 用語解説の内容テキストを小さく */
+    [data-testid="stToggle"] + div p {
+        font-size: 0.7rem !important;
+        color: #a0b0c0 !important;
+    }
+    
+    [data-testid="stToggle"] + div {
+        font-size: 0.7rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
