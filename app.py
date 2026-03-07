@@ -1377,7 +1377,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         # 1. 現在価格の用語解説
         st.markdown("""
         <details>
-            <summary style="font-size: 0.7rem; color: #dd3300; cursor: pointer; list-style: none;">ⓘ 用語解説</summary>
+            <summary style="font-size: 0.8rem; color: #dd3300; cursor: pointer; list-style: none;">ⓘ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #6b7b8c; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
                 <strong>現在価格の変動率</strong> - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い
             </div>
