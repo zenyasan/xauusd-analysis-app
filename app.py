@@ -434,7 +434,7 @@ st.markdown("""
     
     /* 用語解説のトグルボタンとテキストを小さく */
     [data-testid="stToggle"] label {
-        font-size: 0.75rem !important;
+        font-size: 0.5rem !important;
     }
     
     [data-testid="stToggle"] label p {
