@@ -1377,7 +1377,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         # 1. 現在価格の用語解説
         st.markdown("""
         <details>
-            <summary style="font-size: 0.7rem; color: #00aaff; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
+            <summary style="font-size: 0.7rem; color: #ff5500; cursor: pointer; list-style: none;">✔ℹ️ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #00aaff; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
                 <strong>現在価格の変動率</strong> - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い
             </div>
@@ -1392,7 +1392,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         # 2. RSIの用語解説
         st.markdown("""
         <details>
-            <summary style="font-size: 0.7rem; color: #00aaff; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
+            <summary style="font-size: 0.7rem; color: #ff5500; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #00aaff; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
                 <strong>RSI (7)</strong> - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断
             </div>
@@ -1407,7 +1407,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         # 3. MACDの用語解説
         st.markdown("""
         <details>
-            <summary style="font-size: 0.7rem; color: #00aaff; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
+            <summary style="font-size: 0.7rem; color: #ff5500; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #00aaff; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
                 <strong>MACD</strong> - 🟢 買いシグナル: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり / 🔴 売りシグナル: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり
             </div>
@@ -1422,7 +1422,7 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         # 4. ATRの用語解説
         st.markdown("""
         <details>
-            <summary style="font-size: 0.7rem; color: #00aaff; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
+            <summary style="font-size: 0.7rem; color: #ff5500; cursor: pointer; list-style: none;">ℹ️ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #00aaff; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
                 <strong>ATR（ボラティリティ指標）</strong> - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応
             </div>
