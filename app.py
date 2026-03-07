@@ -1347,96 +1347,96 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
     
     if style == "スキャルピング":
         analysis = f"""
-    ## 💨 スキャルピング分析（{timeframe}）
-    
-    ### 📊 テクニカル状況
-    
-    - **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
-    """
+## 💨 スキャルピング分析（{timeframe}）
+
+### 📊 テクニカル状況
+
+- **現在価格**: ${current:,.2f} ({change_pct:+.2f}%)
+"""
         st.markdown(analysis)
         
         if st.toggle("ℹ️ 用語解説", value=False, key="toggle_price"):
             st.markdown("**現在価格の変動率** - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い")
         
         analysis2 = f"""
-    - RSI (7): {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}
-    """
+- RSI (7): {rsi:.1f} {"⚠️ 買われすぎ" if rsi > 70 else "✅ 売られすぎ" if rsi < 30 else "➡️ 中立"}
+"""
         st.markdown(analysis2)
         
         if st.toggle("ℹ️ 用語解説", value=False, key="toggle_rsi"):
             st.markdown("**RSI (7)** - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断")
         
         analysis3 = f"""
-    - MACD: {macd_trend}
-    """
+- MACD: {macd_trend}
+"""
         st.markdown(analysis3)
         
         if st.toggle("ℹ️ 用語解説", value=False, key="toggle_macd"):
             st.markdown("**MACD** - 🟢 買いシグナル: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり / 🔴 売りシグナル: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり")
         
         analysis4 = f"""
-    - ATR: {atr:.2f}（ボラティリティ指標）
-    """
+- ATR: {atr:.2f}（ボラティリティ指標）
+"""
         st.markdown(analysis4)
         
         if st.toggle("ℹ️ 用語解説", value=False, key="toggle_atr"):
             st.markdown("**ATR（ボラティリティ指標）** - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応")
         
         analysis5 = f"""
-    - ピボット: ${pivot:,.2f}
-    """
+- ピボット: ${pivot:,.2f}
+"""
         st.markdown(analysis5)
         
         if st.toggle("ℹ️ 用語解説", value=False, key="toggle_pivot"):
             st.markdown("**ピボットポイント** - 前日の高値・安値・終値から計算される基準価格。トレーダーが注目するポイント / S1（サポート1）: 第1サポートライン（下値支持） / R1（レジスタンス1）: 第1レジスタンスライン（上値抵抗）")
         
         analysis6 = f"""
-    ### 🎯 高精度エントリー戦略
-    
-    #### 🟢 ロングの場合
-    **エントリー条件：**
-    - 価格が ${s1:,.2f}（S1）〜${pivot:,.2f}（ピボット）で反発
-    - RSI < 40 かつ MACD上昇転換
-    - ATRベースの最適タイミング
-    
-    **ポジション詳細：**
-    - **エントリー**: ${targets['long']['entry']:,.2f}
-    - **損切り（SL）**: ${targets['long']['sl']:,.2f}（ATR 1.5倍）
-    - **利確1（50%）**: ${targets['long']['tp1']:,.2f}（ATR 2倍）
-    - **利確2（50%）**: ${targets['long']['tp2']:,.2f}（ATR 3倍）
-    - **リスクリワード**: 1:{rr_long:.2f}
-    
-    #### 🔴 ショートの場合
-    **エントリー条件：**
-    - 価格が ${pivot:,.2f}（ピボット）〜${r1:,.2f}（R1）で反落
-    - RSI > 60 かつ MACD下降転換
-    - ATRベースの最適タイミング
-    
-    **ポジション詳細：**
-    - **エントリー**: ${targets['short']['entry']:,.2f}
-    - **損切り（SL）**: ${targets['short']['sl']:,.2f}（ATR 1.5倍）
-    - **利確1（50%）**: ${targets['short']['tp1']:,.2f}（ATR 2倍）
-    - **利確2（50%）**: ${targets['short']['tp2']:,.2f}（ATR 3倍）
-    - **リスクリワード**: 1:{rr_short:.2f}
-    
-    ### ⚠️ 注意点
-    
-    - **スプレッド考慮：エントリーは±3ドルの余裕を持つ**
-    <small class="note-text">→ ブローカーのスプレッドは2-5ドル程度。エントリー価格から±3ドルの範囲で約定されることを想定</small>
-    
-    - **経済指標30分前は避ける**
-    <small class="note-text">→ 雇用統計、GDP、FOMC発表などの重要指標前後は価格が急変動。Investing.comで経済カレンダーを確認</small>
-    
-    - **連続3回負けたら1時間休憩必須**
-    <small class="note-text">→ コンビニまで歩いてみる、一旦画面から離れる、画面をオフにする、深呼吸する</small>
-    
-    - **ATRが平均の1.5倍以上の時は見送り**
-    <small class="note-text">→ 通常ATRが10-15の場合、22以上なら見送り。ボラティリティが高すぎて損切りに引っかかりやすい</small>
-    """
+### 🎯 高精度エントリー戦略
+
+#### 🟢 ロングの場合
+**エントリー条件：**
+- 価格が ${s1:,.2f}（S1）〜${pivot:,.2f}（ピボット）で反発
+- RSI < 40 かつ MACD上昇転換
+- ATRベースの最適タイミング
+
+**ポジション詳細：**
+- **エントリー**: ${targets['long']['entry']:,.2f}
+- **損切り（SL）**: ${targets['long']['sl']:,.2f}（ATR 1.5倍）
+- **利確1（50%）**: ${targets['long']['tp1']:,.2f}（ATR 2倍）
+- **利確2（50%）**: ${targets['long']['tp2']:,.2f}（ATR 3倍）
+- **リスクリワード**: 1:{rr_long:.2f}
+
+#### 🔴 ショートの場合
+**エントリー条件：**
+- 価格が ${pivot:,.2f}（ピボット）〜${r1:,.2f}（R1）で反落
+- RSI > 60 かつ MACD下降転換
+- ATRベースの最適タイミング
+
+**ポジション詳細：**
+- **エントリー**: ${targets['short']['entry']:,.2f}
+- **損切り（SL）**: ${targets['short']['sl']:,.2f}（ATR 1.5倍）
+- **利確1（50%）**: ${targets['short']['tp1']:,.2f}（ATR 2倍）
+- **利確2（50%）**: ${targets['short']['tp2']:,.2f}（ATR 3倍）
+- **リスクリワード**: 1:{rr_short:.2f}
+
+### ⚠️ 注意点
+
+- **スプレッド考慮：エントリーは±3ドルの余裕を持つ**
+<small class="note-text">→ ブローカーのスプレッドは2-5ドル程度。エントリー価格から±3ドルの範囲で約定されることを想定</small>
+
+- **経済指標30分前は避ける**
+<small class="note-text">→ 雇用統計、GDP、FOMC発表などの重要指標前後は価格が急変動。Investing.comで経済カレンダーを確認</small>
+
+- **連続3回負けたら1時間休憩必須**
+<small class="note-text">→ コンビニまで歩いてみる、一旦画面から離れる、画面をオフにする、深呼吸する</small>
+
+- **ATRが平均の1.5倍以上の時は見送り**
+<small class="note-text">→ 通常ATRが10-15の場合、22以上なら見送り。ボラティリティが高すぎて損切りに引っかかりやすい</small>
+"""
         st.markdown(analysis6, unsafe_allow_html=True)
     
     elif style == "デイトレード":
-            analysis = f"""
+        analysis = f"""
 ## 📊 デイトレード分析（{timeframe}）
 
 ### トレンド判定
@@ -1494,10 +1494,10 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
 - ATRが{atr:.2f}なので、{"ボラティリティ高め、損切り幅を拡大" if atr > 15 else "ボラティリティ通常、標準的戦略で"}
 - ポジションは必ず当日中に決済
 """
-    st.markdown(analysis)
+        st.markdown(analysis)
     
     else:
-            analysis = f"""
+        analysis = f"""
 ## 📈 スイングトレード分析（{timeframe}）
 
 ### 🌍 マクロ環境
