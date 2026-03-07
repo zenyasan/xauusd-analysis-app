@@ -1379,7 +1379,10 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         <details style="margin-top: -0.8rem; margin-left: 1.6rem;">
             <summary style="font-size: 0.8rem; color: #dd3300; cursor: pointer; list-style: none;">ⓘ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #6b7b8c; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
-                <strong>現在価格の変動率</strong> - プラス（+）: 前の時間帯より上昇 → 上昇トレンドの可能性が高い / マイナス（-）: 前の時間帯より下落 → 下落トレンドの可能性が高い
+                <strong>現在価格の変動率</strong> - 前の時間帯と比べて価格がどれだけ動いたかを示します。<br>
+                プラス（+）の時：価格が上がっている = 買いたい人が多い = 上昇の勢いあり<br>
+                マイナス（-）の時：価格が下がっている = 売りたい人が多い = 下落の勢いあり<br>
+                数字が大きいほど、勢いが強いということです。
             </div>
         </details>
         """, unsafe_allow_html=True)
@@ -1394,7 +1397,11 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         <details style="margin-top: -0.8rem; margin-left: 1.6rem;">
             <summary style="font-size: 0.8rem; color: #dd3300; cursor: pointer; list-style: none;">ⓘ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #6b7b8c; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
-                <strong>RSI (7)</strong> - 70以上: 買われすぎ → 売りを検討 / 30以下: 売られすぎ → 買いを検討 / 40-60: 中立 → トレンドに従って判断
+                <strong>RSI（買われすぎ・売られすぎ指標）</strong> - 0〜100の数字で「買われすぎ」「売られすぎ」を判断します。<br>
+                70以上：買われすぎ = そろそろ価格が下がるかも → 売りのタイミング<br>
+                30以下：売られすぎ = そろそろ価格が上がるかも → 買いのタイミング<br>
+                40〜60：普通の状態 = 様子見して、トレンドの方向に従う<br>
+                初心者は30以下で買い、70以上で売るのが基本です。
             </div>
         </details>
         """, unsafe_allow_html=True)
@@ -1409,7 +1416,10 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         <details style="margin-top: -0.8rem; margin-left: 1.6rem;">
             <summary style="font-size: 0.8rem; color: #dd3300; cursor: pointer; list-style: none;">ⓘ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #6b7b8c; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
-                <strong>MACD</strong> - 🟢 買いシグナル: MACDラインがシグナルラインを上抜け → 上昇トレンドの始まり / 🔴 売りシグナル: MACDラインがシグナルラインを下抜け → 下落トレンドの始まり
+                <strong>MACD（トレンド転換サイン）</strong> - 価格の流れ（トレンド）が変わるタイミングを教えてくれます。<br>
+                🟢 買いシグナル：2本の線がクロスして上向きに = これから上がる可能性が高い<br>
+                🔴 売りシグナル：2本の線がクロスして下向きに = これから下がる可能性が高い<br>
+                シグナルが出たら、その方向にエントリーするのが基本戦略です。
             </div>
         </details>
         """, unsafe_allow_html=True)
@@ -1424,7 +1434,10 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         <details style="margin-top: -0.8rem; margin-left: 1.6rem;">
             <summary style="font-size: 0.8rem; color: #dd3300; cursor: pointer; list-style: none;">ⓘ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #6b7b8c; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
-                <strong>ATR（ボラティリティ指標）</strong> - ボラティリティ（価格変動の大きさ）を測る指標 / 数値が大きい: 値動きが激しい → 損切り幅を広くする / 数値が小さい: 値動きが穏やか → 通常の戦略で対応
+                <strong>ATR（価格の動きの激しさ）</strong> - 価格がどれくらい激しく動いているかを数字で表します。<br>
+                数字が大きい（20以上）：値動きが激しい = 損切り幅を広くする、慎重に<br>
+                数字が小さい（10以下）：値動きが穏やか = 通常通りの戦略でOK<br>
+                初心者は、ATRが大きすぎる時（平均の1.5倍以上）はトレードを避けましょう。
             </div>
         </details>
         """, unsafe_allow_html=True)
@@ -1439,7 +1452,11 @@ def generate_advanced_analysis(style, current, change_pct, rsi, macd, macd_signa
         <details style="margin-top: -0.8rem; margin-left: 1.6rem;">
             <summary style="font-size: 0.8rem; color: #dd3300; cursor: pointer; list-style: none;">ⓘ 用語解説</summary>
             <div style="font-size: 0.7rem; color: #6b7b8c; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
-                <strong>ピボットポイント</strong> - 前日の高値・安値・終値から計算される基準価格。トレーダーが注目するポイント / S1（サポート1）: 第1サポートライン（下値支持） / R1（レジスタンス1）: 第1レジスタンスライン（上値抵抗）
+                <strong>ピボットポイント</strong> - 多くのトレーダーが注目する「価格の節目」です。<br>
+                ピボット：中心となる価格。ここを基準に上下を判断します<br>
+                S1（サポート）：価格が下がってもここで止まりやすい = 買いのチャンス<br>
+                R1（レジスタンス）：価格が上がってもここで止まりやすい = 売りのチャンス<br>
+                この3つのラインを意識してエントリー・決済ポイントを決めましょう。
             </div>
         </details>
         """, unsafe_allow_html=True)
