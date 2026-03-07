@@ -503,7 +503,7 @@ if not check_password():
 st.markdown("""
 <div style="background: linear-gradient(135deg, rgba(255, 100, 0, 0.15) 0%, rgba(255, 50, 0, 0.15) 100%); 
             border: 2px solid rgba(255, 100, 0, 0.5); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
-    <h4 style="color: #ff6600; margin-top: 30.0; font-size: 1rem;">⚠️ 重要な免責事項</h4>
+    <h4 style="color: #ff6600; margin-top: 0; font-size: 1rem;">⚠️ 重要な免責事項</h4>
     <p style="font-size: 0.8rem; line-height: 1.6; margin-bottom: 0; color: #c0d8ff;">
         本アプリは<strong style="color: #00aaff;">教育目的のみ</strong>で提供されています。<br>
         表示される分析・価格は、一般的なテクニカル分析の教科書的な内容であり、
