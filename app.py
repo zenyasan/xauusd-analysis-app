@@ -2000,7 +2000,7 @@ try:
                 st.markdown(generate_harsh_feedback(stats))
                 
                 st.markdown("""
-                <details style="margin-top: 0.5rem; margin-left: 0rem;">
+                <details style="margin-top: 0.5rem; margin-left: 1.6rem;">
                     <summary style="font-size: 0.8rem; color: #dd3300; cursor: pointer; list-style: none;">ⓘ プロフィットファクター（PF）とは</summary>
                     <div style="font-size: 0.7rem; color: #6b7b8c; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
                         <strong>プロフィットファクター（PF）</strong> - あなたのトレードが全体的に稼げているかを示す数字です。<br>
