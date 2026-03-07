@@ -1997,30 +1997,30 @@ try:
                 with col4:
                     st.metric("総トレード", stats['total'])
                 
-            st.markdown("""
-            <details style="margin-top: -0.8rem; margin-left: 1.6rem;">
-                <summary style="font-size: 0.8rem; color: #dd3300; cursor: pointer; list-style: none;">ⓘ プロフィットファクター（PF）とは</summary>
-                <div style="font-size: 0.7rem; color: #6b7b8c; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
-                    <strong>プロフィットファクター（PF）</strong> - あなたのトレードが全体的に稼げているかを示す数字です。<br>
-                    <strong>計算式：</strong>総利益 ÷ 総損失<br><br>
-                    <strong>数値の見方：</strong><br>
-                    1.0未満：負けている = 手法を見直す必要あり（このまま続けると資金が減る）<br>
-                    1.0〜1.5：ギリギリ勝っている = もう少し改善が必要<br>
-                    1.5〜2.0：良好 = 安定して勝てている状態<br>
-                    2.0以上：優秀 = かなり良い成績。この調子を維持<br>
-                    3.0以上：プロレベル = 非常に優秀。手法を変えないで<br><br>
-                    <strong>例：</strong>総利益$300、総損失$150の場合<br>
-                    PF = 300 ÷ 150 = 2.0（良好な成績です！）
-                </div>
-            </details>
-            """, unsafe_allow_html=True)
-
-            st.markdown(generate_harsh_feedback(stats))
-    
-            st.markdown("")
-            st.markdown("")
-            
-            st.markdown(generate_advice(stats))
+                st.markdown(generate_harsh_feedback(stats))
+                
+                st.markdown("""
+                <details style="margin-top: 0.5rem; margin-left: 0rem;">
+                    <summary style="font-size: 0.8rem; color: #dd3300; cursor: pointer; list-style: none;">ⓘ プロフィットファクター（PF）とは</summary>
+                    <div style="font-size: 0.7rem; color: #6b7b8c; padding: 0.5rem 0 0.5rem 1rem; line-height: 1.5;">
+                        <strong>プロフィットファクター（PF）</strong> - あなたのトレードが全体的に稼げているかを示す数字です。<br>
+                        <strong>計算式：</strong>総利益 ÷ 総損失<br><br>
+                        <strong>数値の見方：</strong><br>
+                        1.0未満：負けている = 手法を見直す必要あり（このまま続けると資金が減る）<br>
+                        1.0〜1.5：ギリギリ勝っている = もう少し改善が必要<br>
+                        1.5〜2.0：良好 = 安定して勝てている状態<br>
+                        2.0以上：優秀 = かなり良い成績。この調子を維持<br>
+                        3.0以上：プロレベル = 非常に優秀。手法を変えないで<br><br>
+                        <strong>例：</strong>総利益$300、総損失$150の場合<br>
+                        PF = 300 ÷ 150 = 2.0（良好な成績です！）
+                    </div>
+                </details>
+                """, unsafe_allow_html=True)
+                
+                st.markdown("")
+                st.markdown("")
+                
+                st.markdown(generate_advice(stats))
 
         else:
             st.info("統計分析にはトレードデータが必要です")
